@@ -67,7 +67,7 @@ class SchoolNewsModel{
       status: json['status'] ?? "",
       submittedBy: json['submitted_by'] ?? "",
       submittedByProfile: json['submitted_by_profile'] ?? "",
-      attachments: (json['attachments'] as List<dynamic>? ?? [])
+      attachments: (json['attachment'] as List<dynamic>? ?? [])
           .map((e) => Attachment.fromJson(e))
           .toList(),
     );

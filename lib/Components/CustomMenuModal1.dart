@@ -300,7 +300,8 @@ String getRouteForModule(String moduleId) {
     case 'staff-attendance':
       return 'mark-staff-attendance';
     case 'school-news': return 'school-news';
-
+    case 'calendar': return 'calendar';
+    case 'student-leave': return 'student-leave';
     default:
       return '';
   }

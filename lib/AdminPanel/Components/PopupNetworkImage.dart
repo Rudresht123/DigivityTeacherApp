@@ -1,4 +1,6 @@
+import 'package:digivity_admin_app/AdminPanel/MobileThemsColors/theme_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class PopupNetworkImage extends StatelessWidget {
   final String imageUrl;
@@ -14,6 +16,7 @@ class PopupNetworkImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final uiTheme = Provider.of<UiThemeProvider>(context);
     return GestureDetector(
       onTap: () {
         showGeneralDialog(
@@ -35,7 +38,7 @@ class PopupNetworkImage extends StatelessWidget {
                         child: Container(
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: Colors.grey,
+                              color:uiTheme.appBarColor ?? Colors.grey,
                               width: 5,
                             ),
                             borderRadius: BorderRadius.circular(16),
@@ -70,11 +73,18 @@ class PopupNetworkImage extends StatelessWidget {
           },
         );
       },
-      child: CircleAvatar(
-        radius: radius,
-        backgroundImage: NetworkImage(imageUrl),
-        backgroundColor: Colors.grey[200],
-      ),
+      child: Container(
+        padding: const EdgeInsets.all(1),
+        decoration: BoxDecoration(
+          color: uiTheme.appBarColor ?? Colors.black,
+          shape: BoxShape.circle,
+        ),
+        child: CircleAvatar(
+          radius: 30, // avatar radius
+          backgroundImage: NetworkImage(imageUrl),
+          backgroundColor: Colors.grey[200],
+        ),
+      )
     );
   }
 }

@@ -41,8 +41,7 @@ class SchoolNewsHelper {
       if (userId == null && token == null) {
         await init();
       }
-
-      final url = 'api/MobileApp/teacher/$userId/$noticeId/RemoveNotice';
+      final url = 'api/MobileApp/teacher/$userId/$noticeId/RemoveNews';
       final response = await getApiService.getRequestData(url, token!);
 
       if (response['result'] == 1) {

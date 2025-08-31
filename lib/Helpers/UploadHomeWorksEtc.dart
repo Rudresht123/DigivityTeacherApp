@@ -38,6 +38,9 @@ class UploadHomeWorksEtc {
       else if(forUpload=='circular'){
         url = 'api/MobileApp/teacher/$userId/StoreCircular';
       }
+      else if(forUpload=='schoolnews'){
+        url = 'api/MobileApp/teacher/$userId/StoreSchoolNews';
+      }
 
       // Encode files to base64 and add as fileList0, fileList1,...
       for (int i = 0; i < files.length; i++) {

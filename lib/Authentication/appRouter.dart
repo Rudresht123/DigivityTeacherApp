@@ -1,5 +1,6 @@
 import 'package:digivity_admin_app/AdminPanel/AuthenticationMultiuser/MultiSchoolApp.dart';
 import 'package:digivity_admin_app/AdminPanel/Dashboard.dart';
+import 'package:digivity_admin_app/AdminPanel/Screens/Calendar/CalendarWithEvents.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/CommunicationManagement/CommunicationIndex.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/CommunicationManagement/SendSMS/ComposeSms.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/CommunicationManagement/SendSMS/SendSmsTousers.dart';
@@ -46,6 +47,8 @@ import 'package:digivity_admin_app/AdminPanel/Screens/StudentAttendanceReports/D
 import 'package:digivity_admin_app/AdminPanel/Screens/StudentAttendanceReports/DayWiseStudentAttendanceReportScreen.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/StudentAttendanceReports/StaffAttendanceReportForm.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/StudentAttendanceReports/StudentAttendaceReports.dart';
+import 'package:digivity_admin_app/AdminPanel/Screens/StudentLeave/FillterStudentDataForLeave.dart';
+import 'package:digivity_admin_app/AdminPanel/Screens/StudentLeave/StudentLeaveRecordScreen.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/StudentsManagement/EditStudentDetails.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/StudentsManagement/StudentDashboard.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/StudentsManagement/StudentListScreen.dart';
@@ -59,6 +62,7 @@ import 'package:digivity_admin_app/AdminPanel/Screens/Uploads/HomeWorks/AddHomew
 import 'package:digivity_admin_app/AdminPanel/Screens/Uploads/HomeWorks/StudentHomework.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/Uploads/Notice/AddNoticeScreen.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/Uploads/Notice/SchoolNotice.dart';
+import 'package:digivity_admin_app/AdminPanel/Screens/Uploads/SchoolNews/AddSchoolNews.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/Uploads/SchoolNews/SchoolNews.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/Uploads/StudentDocuments/ClassWiseStudentDocumentsReports.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/Uploads/StudentDocuments/ClasswiseStudentDocumentUplodedList.dart';
@@ -812,21 +816,54 @@ final GoRouter appRouter = GoRouter(
 
     /// Staff Attendance Section Start Here
     GoRoute(
-        name: 'mark-staff-attendance',
-        path: '/mark-staff-attendance',
-        builder: (context, state) {
-         return StaffMarkAttendance();
-        },),
-
-
+      name: 'mark-staff-attendance',
+      path: '/mark-staff-attendance',
+      builder: (context, state) {
+        return StaffMarkAttendance();
+      },
+    ),
 
     /// School News Section Start Here
     GoRoute(
-        name: 'school-news',
-        path: '/school-news',
-        builder: (context,state){
-          return SchoolNews();
-        }),
+      name: 'school-news',
+      path: '/school-news',
+      builder: (context, state) {
+        return SchoolNews();
+      },
+    ),
+    GoRoute(
+      name: 'add-school-news',
+      path: '/add-school-news',
+      builder: (context, state) {
+        return AddSchoolNews();
+      },
+    ),
+
+    /// Calender Section Start Here
+    GoRoute(
+      name: 'calendar',
+      path: '/calendar',
+      builder: (context, state) {
+        return CalendarWithEvents();
+      },
+    ),
+
+    /// Student Leave Section Start Here
+    GoRoute(
+      name: 'student-leave',
+      path: '/student-leave',
+      builder: (context, state) {
+        return FillterStudentDataForLeave();
+      },
+    ),
+    GoRoute(
+      name: 'student-leave-record',
+      path: '/student-leave-record',
+      builder: (context, state) {
+        final formData = state.extra as Map<String, dynamic>?;
+        return StudentLeaveRecordScreen(formData: formData);
+      },
+    ),
   ],
   redirect: (context, state) async {
     final prefs = await SharedPreferences.getInstance();

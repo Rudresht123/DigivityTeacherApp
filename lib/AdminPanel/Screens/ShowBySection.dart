@@ -3,14 +3,14 @@ import 'package:digivity_admin_app/Components/FieldSet.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class NotifyBySection extends StatefulWidget {
-  const NotifyBySection({super.key});
+class ShowBySection extends StatefulWidget {
+  const ShowBySection({super.key});
 
   @override
-  State<NotifyBySection> createState() => NotifyBySectionState();
+  State<ShowBySection> createState() => ShowBySectionState();
 }
 
-class NotifyBySectionState extends State<NotifyBySection> {
+class ShowBySectionState extends State<ShowBySection> {
   final List<String> options = ["Text", "App", "Whatsapp", "Email", "Website"];
   final Map<String, bool> selectedOptions = {
     "Text": true,
@@ -23,7 +23,7 @@ class NotifyBySectionState extends State<NotifyBySection> {
     super.initState();
   }
 
-  void resetNotifySelection() {
+  void resetShowBySelection() {
     setState(() {
       for (var option in options) {
         selectedOptions[option] = false;
@@ -34,11 +34,11 @@ class NotifyBySectionState extends State<NotifyBySection> {
   // 👇 Method to get the selected options in API format
   Map<String, dynamic> getSelectedNotifyValues() {
     return {
-      'with_text_sms': selectedOptions['Text'] == true ? 'yes' : 'no',
-      'with_app': selectedOptions['App'] == true ? 'yes' : 'no',
-      'with_whatsapp': selectedOptions['Whatsapp'] == true ? 'yes' : 'no',
-      'with_email': selectedOptions['Email'] == true ? 'yes' : 'no',
-      'with_website': selectedOptions['Website'] == true ? 'yes' : 'no',
+      'show_text_sms': selectedOptions['Text'] == true ? 'yes' : 'no',
+      'show_app': selectedOptions['App'] == true ? 'yes' : 'no',
+      'show_whatsapp': selectedOptions['Whatsapp'] == true ? 'yes' : 'no',
+      'show_email': selectedOptions['Email'] == true ? 'yes' : 'no',
+      'show_website': selectedOptions['Website'] == true ? 'yes' : 'no',
     };
   }
 
@@ -71,8 +71,8 @@ class NotifyBySectionState extends State<NotifyBySection> {
                       });
                     },
                     fillColor: MaterialStateProperty.resolveWith<Color>((
-                      Set<MaterialState> states,
-                    ) {
+                        Set<MaterialState> states,
+                        ) {
                       if (states.contains(MaterialState.selected)) {
                         return uiTheme.buttonColor ?? Colors.blue;
                       }

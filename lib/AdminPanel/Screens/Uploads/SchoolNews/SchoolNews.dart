@@ -1,4 +1,8 @@
+import 'package:digivity_admin_app/AdminPanel/Components/CommonBottomSheetForUploads.dart';
+import 'package:digivity_admin_app/AdminPanel/Screens/Uploads/Notice/NoticeFillterBorromSheet.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/Uploads/SchoolNews/SchoolNewsCard.dart';
+import 'package:digivity_admin_app/AdminPanel/Screens/Uploads/SchoolNews/SchoolNewsFillterBottomSheet.dart';
+import 'package:digivity_admin_app/AuthenticationUi/Loader.dart';
 import 'package:flutter/material.dart';
 import 'package:digivity_admin_app/AdminPanel/Components/SearchBox.dart';
 import 'package:digivity_admin_app/AdminPanel/Models/UploadsModel/SchoolNewsModel.dart';
@@ -6,6 +10,7 @@ import 'package:digivity_admin_app/Components/ApiMessageWidget.dart';
 import 'package:digivity_admin_app/Components/BackgrounWeapper.dart';
 import 'package:digivity_admin_app/Components/SimpleAppBar.dart';
 import 'package:digivity_admin_app/Helpers/UploadsDocumentsHelpers/SchoolNewsHelper.dart';
+import 'package:go_router/go_router.dart';
 
 class SchoolNews extends StatefulWidget {
   @override
@@ -21,7 +26,7 @@ class _SchoolNewsState extends State<SchoolNews> {
   @override
   void initState() {
     super.initState();
-    _getCreatedSchoolNews();
+    _getCreatedSchoolNews({});
     _searchController.addListener(_filterNews);
   }
 
@@ -35,10 +40,10 @@ class _SchoolNewsState extends State<SchoolNews> {
     });
   }
 
-  Future<void> _getCreatedSchoolNews() async {
+  Future<void> _getCreatedSchoolNews(Map<String, dynamic>? formdata) async {
     setState(() => _isLoading = true);
     try {
-      final response = await SchoolNewsHelper().getCreateSchoolNews({});
+      final response = await SchoolNewsHelper().getCreateSchoolNews(formdata);
       if (response is List) {
         setState(() {
           _schoolNews = response;
@@ -92,20 +97,24 @@ class _SchoolNewsState extends State<SchoolNews> {
                             withTextSms: news.showTextSms,
                             withWebsite: news.showWebsite,
                             authorizedBy: news.newsWroteBy,
-                            newsUrls: (news.urlLink != null &&
-                                news.urlLink!.trim().isNotEmpty)
+                            newsUrls:
+                                (news.urlLink != null &&
+                                    news.urlLink!.trim().isNotEmpty)
                                 ? news.urlLink!
-                                .split('~')
-                                .map((e) => e.trim())
-                                .where((e) => e.isNotEmpty)
-                                .toList()
+                                      .split('~')
+                                      .map((e) => e.trim())
+                                      .where((e) => e.isNotEmpty)
+                                      .toList()
                                 : [],
                             onDelete: () async {
                               final helper = SchoolNewsHelper();
                               final response = await helper.deleteSchoolNews(
-                                  news.newsId);
+                                news.newsId,
+                              );
                               if (response['result'] == 1) {
-                                await _getCreatedSchoolNews(); // refresh list after delete
+                                await _getCreatedSchoolNews(
+                                  {},
+                                ); // refresh list after delete
                               }
                               return response;
                             },
@@ -116,6 +125,33 @@ class _SchoolNewsState extends State<SchoolNews> {
             ],
           ),
         ),
+      ),
+      bottomNavigationBar: CommonBottomSheetForUploads(
+        onFilter: () async {
+          final filterData = await showModalBottomSheet<Map<String, dynamic>>(
+            context: context,
+            isScrollControlled: true,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            ),
+            builder: (_) => SchoolNewsFillterBottomSheet(),
+          );
+          if (filterData != null) {
+            showLoaderDialog(context);
+            try {
+              await _getCreatedSchoolNews(filterData);
+            } catch (e) {
+              print("${e}");
+              showBottomMessage(context, "${e}", true);
+            } finally {
+              hideLoaderDialog(context);
+            }
+          }
+        },
+        onAdd: () {
+          context.pushNamed('add-school-news');
+        },
+        addText: "Add News",
       ),
     );
   }
