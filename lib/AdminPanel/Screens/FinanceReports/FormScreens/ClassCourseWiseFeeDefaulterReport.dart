@@ -95,7 +95,8 @@ class _ClassCourseWiseFeeDefaulterReport extends State<ClassCourseWiseFeeDefault
     return Scaffold(
       appBar: PreferredSize(preferredSize: Size.fromHeight(kToolbarHeight), child: SimpleAppBar(titleText: 'Class/Course Wise Fee Defaulter Report', routeName: 'back')),
       body: BackgroundWrapper(child:
-      Column(
+    SingleChildScrollView(
+      child:   Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           CardContainer(
@@ -106,12 +107,12 @@ class _ClassCourseWiseFeeDefaulterReport extends State<ClassCourseWiseFeeDefault
                   controller: _fromdate,
                 ),
                 SizedBox(height: 20,),
-              CustomDropdown(items: items, displayKey: 'value', valueKey: 'id', onChanged: (value){
-                selectedBalanceOption=value;
-                setState(() {
+                CustomDropdown(items: items, displayKey: 'value', valueKey: 'id', onChanged: (value){
+                  selectedBalanceOption=value;
+                  setState(() {
 
-                });
-              }, hint: 'Zero Bal. Show In List'),
+                  });
+                }, hint: 'Zero Bal. Show In List'),
                 SizedBox(height: 20,),
                 CourseComponent(
                   onChanged: (value){
@@ -132,11 +133,11 @@ class _ClassCourseWiseFeeDefaulterReport extends State<ClassCourseWiseFeeDefault
                 CustomTextField(label: 'Result Value', hintText: '0', controller: _resultController),
                 SizedBox(height: 20,),
                 ImportFeeHeads(
-                    onChanged: (value){
+                  onChanged: (value){
                     feehead=value;
                     setState(() {
                     });
-                },
+                  },
                 ),
                 SizedBox(height: 20,),
                 CustomTextField(label: 'Student Name', hintText: 'Enter Student Name', controller: _studentname),
@@ -152,7 +153,8 @@ class _ClassCourseWiseFeeDefaulterReport extends State<ClassCourseWiseFeeDefault
               ],
             ),
           )
-        ],)
+        ],),
+    )
       ),
     );
   }

@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-
 class CustomMenuContainer extends StatelessWidget {
   const CustomMenuContainer({super.key});
 
@@ -31,49 +30,61 @@ class CustomMenuContainer extends StatelessWidget {
       child: menuProvider.isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Text(
-                "Navigation Menus",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: uiTheme.appbarIconColor ?? Colors.black,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Text(
+                      "Navigation Menus",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: uiTheme.appbarIconColor ?? Colors.black,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  menuProvider.quickActions.isNotEmpty
+                      ? buildModuleGrid(
+                          'Quick Actions',
+                          uiTheme,
+                          menuProvider.quickActions,
+                        )
+                      : const SizedBox.shrink(),
+                  const SizedBox(height: 16),
+                  menuProvider.importantLinks.isNotEmpty
+                      ? buildModuleGrid(
+                          'Important Links',
+                          uiTheme,
+                          menuProvider.importantLinks,
+                        )
+                      : const SizedBox.shrink(),
+                  const SizedBox(height: 16),
+                  menuProvider.aboutSchool.isNotEmpty
+                      ? buildModuleGrid(
+                          'About School',
+                          uiTheme,
+                          menuProvider.aboutSchool,
+                        )
+                      : const SizedBox.shrink(),
+                ],
               ),
             ),
-            const SizedBox(height: 16),
-            menuProvider.quickActions.isNotEmpty
-                ? buildModuleGrid('Quick Actions', uiTheme, menuProvider.quickActions)
-                : const SizedBox.shrink(),
-            const SizedBox(height: 16),
-            menuProvider.importantLinks.isNotEmpty
-                ? buildModuleGrid('Important Links', uiTheme, menuProvider.importantLinks)
-                : const SizedBox.shrink(),
-            const SizedBox(height: 16),
-            menuProvider.aboutSchool.isNotEmpty
-                ? buildModuleGrid('About School', uiTheme, menuProvider.aboutSchool)
-                : const SizedBox.shrink(),
-          ],
-        ),
-      ),
     );
   }
 }
 
 Widget buildModuleGrid(
-    String title,
-    UiThemeProvider uiTheme,
-    List<Map<String, dynamic>> modules,
-    ) {
+  String title,
+  UiThemeProvider uiTheme,
+  List<Map<String, dynamic>> modules,
+) {
   return LayoutBuilder(
     builder: (context, constraints) {
       final crossAxisCount = _getCrossAxisCount(constraints.maxWidth);
       final fontSize = _getFontSize(constraints.maxWidth);
       final iconSize = _getIconSize(constraints.maxWidth);
-      final childasspectratio=_childasspectratio(constraints.maxWidth);
+      final childasspectratio = _childasspectratio(constraints.maxWidth);
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -110,7 +121,9 @@ Widget buildModuleGrid(
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
-                    color: uiTheme.iconBgColor?.withOpacity(0.1) ?? Colors.grey.shade100,
+                    color:
+                        uiTheme.iconBgColor?.withOpacity(0.1) ??
+                        Colors.grey.shade100,
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.05),
@@ -143,7 +156,7 @@ Widget buildModuleGrid(
                 ),
               );
             },
-          )
+          ),
         ],
       );
     },
@@ -172,15 +185,12 @@ double _getIconSize(double width) {
   return 40;
 }
 
-
 double _childasspectratio(double width) {
   if (width < 600) return 1.3;
   if (width < 900) return 0.9;
   if (width < 1200) return 0.5;
   return 40;
 }
-
-
 
 IconData getIconForModule(String moduleId) {
   switch (moduleId) {
@@ -282,7 +292,7 @@ String getRouteForModule(String moduleId) {
     case 'staff-list':
       return 'staff-list';
     case 'student-fee-report':
-      return 'student-fee-report';
+      return 'classwise-student-fee-defaulter-report';
     case 'master-update':
       return 'master-update';
     case 'attendance-report':
@@ -299,9 +309,14 @@ String getRouteForModule(String moduleId) {
       return 'online-class';
     case 'staff-attendance':
       return 'mark-staff-attendance';
-    case 'school-news': return 'school-news';
-    case 'calendar': return 'calendar';
-    case 'student-leave': return 'student-leave';
+    case 'school-news':
+      return 'school-news';
+    case 'calendar':
+      return 'calendar';
+    case 'student-leave':
+      return 'student-leave';
+    case 'my-student-birthday':
+      return 'student-birthday-reports';
     default:
       return '';
   }

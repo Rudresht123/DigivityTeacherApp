@@ -4,6 +4,7 @@ import 'package:digivity_admin_app/Components/BackgrounWeapper.dart';
 import 'package:digivity_admin_app/Components/CardContainer.dart';
 import 'package:digivity_admin_app/Components/CourseComponent.dart';
 import 'package:digivity_admin_app/Components/CustomBlueButton.dart';
+import 'package:digivity_admin_app/Components/CustomDropdown.dart';
 import 'package:digivity_admin_app/Components/DatePickerField.dart';
 import 'package:digivity_admin_app/Components/FieldSet.dart';
 import 'package:digivity_admin_app/Components/SimpleAppBar.dart';
@@ -23,6 +24,14 @@ class _FillterStudentDataForLeave extends State<FillterStudentDataForLeave> {
   String? courseId;
   TextEditingController _from_date = TextEditingController();
   TextEditingController _to_date = TextEditingController();
+  String? status;
+  final statuslist = [
+    {"value": "all", "key": "All"},
+    {"value": "pending", "key": "Pending"},
+    {"value": "approve", "key": "Approve"},
+    {"value": "reject", "key": "Reject"},
+    {"value": "cancel", "key": "Cancel"},
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,6 +85,18 @@ class _FillterStudentDataForLeave extends State<FillterStudentDataForLeave> {
                           }
                         },
                       ),
+
+                      SizedBox(height: 15),
+                      CustomDropdown(
+                        items: statuslist,
+                        displayKey: "key",
+                        valueKey: "value",
+                        onChanged: (value) {
+                          status = value;
+                          setState(() {});
+                        },
+                        hint: "Please Select Status",
+                      ),
                     ],
                   ),
                 ),
@@ -98,6 +119,7 @@ class _FillterStudentDataForLeave extends State<FillterStudentDataForLeave> {
                   "course": courseId.toString(),
                   "from_date": _from_date.text,
                   "to_date": _to_date.text,
+                  "status": status,
                 };
                 hideLoaderDialog(context);
                 print(filterdata);

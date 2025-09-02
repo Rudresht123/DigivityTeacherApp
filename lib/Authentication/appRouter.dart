@@ -50,6 +50,7 @@ import 'package:digivity_admin_app/AdminPanel/Screens/StudentAttendanceReports/S
 import 'package:digivity_admin_app/AdminPanel/Screens/StudentLeave/FillterStudentDataForLeave.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/StudentLeave/StudentLeaveRecordScreen.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/StudentsManagement/EditStudentDetails.dart';
+import 'package:digivity_admin_app/AdminPanel/Screens/StudentsManagement/StudentBirthdayList.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/StudentsManagement/StudentDashboard.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/StudentsManagement/StudentListScreen.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/StudentsManagement/StudentLsitsDataForm.dart';
@@ -218,6 +219,15 @@ final GoRouter appRouter = GoRouter(
       path: '/course-wise-student-attendance-reports',
       builder: (context, state) {
         return CourseWiseAttendaceReport();
+      },
+    ),
+
+    // Student Birthday Report
+    GoRoute(
+      name: 'student-birthday-reports',
+      path: '/student-birthday-reports',
+      builder: (context, state) {
+        return StudentBirthdayList();
       },
     ),
 
