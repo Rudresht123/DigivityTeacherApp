@@ -165,7 +165,7 @@ class ComplaintCard extends StatelessWidget {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: complaint.status.isEmpty
+                  color: complaint.status=="no"
                       ? Colors.orange[100]
                       : Colors.green[100],
                   borderRadius: BorderRadius.circular(12),
@@ -174,7 +174,7 @@ class ComplaintCard extends StatelessWidget {
                   complaint.status.isEmpty || complaint.status =="no"  ? "Pending" : "Approved",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: complaint.status.isEmpty
+                    color: complaint.status=="no"
                         ? Colors.orange[800]
                         : Colors.green[800],
                   ),

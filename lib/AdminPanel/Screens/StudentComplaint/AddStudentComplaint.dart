@@ -1,5 +1,4 @@
 import 'package:digivity_admin_app/AdminPanel/Models/ComplaintModel/ComplaintTypeModel.dart';
-import 'package:digivity_admin_app/AdminPanel/Models/GlobalModels/AddStudentModel.dart';
 import 'package:digivity_admin_app/AdminPanel/Models/Studdent/StudentModel.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/NotifyBySection.dart';
 import 'package:digivity_admin_app/Authentication/SharedPrefHelper.dart';
@@ -15,8 +14,8 @@ import 'package:digivity_admin_app/Components/FieldSet.dart';
 import 'package:digivity_admin_app/Components/InputField.dart';
 import 'package:digivity_admin_app/Components/SimpleAppBar.dart';
 import 'package:digivity_admin_app/Helpers/ComplaintHelper/StudentComplaintHelper.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class AddStudentComplaint extends StatefulWidget {
   @override
@@ -33,9 +32,11 @@ class _AddStudentComplaint extends State<AddStudentComplaint> {
   final _fromkey = GlobalKey<FormState>();
   final GlobalKey<NotifyBySectionState> notifyKey =
       GlobalKey<NotifyBySectionState>();
+
   String? courseId;
-  int? complaintTo;
+  int? complaintTo; // student being complained about
   List<StudentModel> studentList = [];
+
   @override
   void initState() {
     super.initState();
@@ -51,18 +52,28 @@ class _AddStudentComplaint extends State<AddStudentComplaint> {
       complainttype = response;
       setState(() {});
     } catch (e) {
-      print("${e}");
-      showBottomMessage(context, "${e}", true);
+      print(e);
+      showBottomMessage(context, "$e", true);
     } finally {
       hideLoaderDialog(context);
     }
+  }
+
+  void _resetForm() {
+    _fromkey.currentState?.reset();
+    _complaint.clear();
+    _complaintdate.text = DateFormat('dd-MM-yyyy').format(DateTime.now());
+    _complainttype = null;
+    complaintTo = null;
+    courseId = null;
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(kToolbarHeight),
+        preferredSize: const Size.fromHeight(kToolbarHeight),
         child: SimpleAppBar(
           titleText: "Add Student Complaint",
           routeName: "back",
@@ -96,7 +107,7 @@ class _AddStudentComplaint extends State<AddStudentComplaint> {
                         });
                       },
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     CustomDropdown(
                       selectedValue: _complainttype,
                       validator: (value) {
@@ -118,17 +129,33 @@ class _AddStudentComplaint extends State<AddStudentComplaint> {
                       },
                       hint: "Select Complaint Type",
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     CustomDropdown(
-                      items: studentList.map((e) {
-                        return {"id": e.studentId, "value": e.studentName};
-                      }).toList(),
+                      items: [
+                        {"id": 0, "value": "Please select complaint to"},
+                        ...studentList.map((e) {
+                          return {
+                            "id": e.studentId,
+                            "value":
+                                "${e.admissionNo} | ${e.studentName} | ${e.course}",
+                          };
+                        }).toList(),
+                      ],
+                      validator: (value) {
+                        if (value == null || value == 0) {
+                          return "Please Select Complaint To First";
+                        }
+                        return null;
+                      },
                       displayKey: "value",
                       valueKey: "id",
-                      onChanged: (value) {},
-                      hint: "Select Complaint By",
+                      onChanged: (value) {
+                        complaintTo = value;
+                        setState(() {});
+                      },
+                      hint: "Select Complaint To",
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     DatePickerField(
                       label: "Complaint Date",
                       controller: _complaintdate,
@@ -139,20 +166,20 @@ class _AddStudentComplaint extends State<AddStudentComplaint> {
                         return null;
                       },
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     CustomTextField(
                       label: "Complaint",
                       hintText: "Enter Complaint",
                       controller: _complaint,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return "Please Enter Complaint First Description";
+                          return "Please Enter Complaint Description";
                         }
                         return null;
                       },
                       maxline: 4,
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     NotifyBySection(key: notifyKey),
                   ],
                 ),
@@ -162,45 +189,48 @@ class _AddStudentComplaint extends State<AddStudentComplaint> {
         ),
       ),
       bottomNavigationBar: Padding(
-        padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
         child: CustomBlueButton(
           text: "Add Complaint",
           icon: Icons.save,
           onPressed: () async {
             if (_fromkey.currentState!.validate()) {
-              // showLoaderDialog(context);
+              showLoaderDialog(context);
               try {
                 final complaintby = await SharedPrefHelper.getPreferenceValue(
                   'user_id',
                 );
+
                 final notifyData =
                     notifyKey.currentState?.getSelectedNotifyValues() ?? {};
+
                 final formdata = {
                   "complaint_for": "student",
                   "complaint_type_id": _complainttype.toString(),
                   "complaint": _complaint.text,
                   "complaint_date": _complaintdate.text,
-                  "complaint_by": complaintby.toString() ?? "0",
+                  "complaint_by":
+                      complaintby?.toString() ?? "0", // logged-in user
+                  "complaint_to": complaintTo ?? 0, // student selected
                   "status": "yes",
+                  "course_id": courseId.toString(),
                   ...notifyData,
                 };
 
-                print(formdata);
-
-                //
                 final response = await StudentComplaintHelper()
                     .storeStudentComplaint(formdata);
-                //
-                // if (response['result'] == 1) {
-                //   showBottomMessage(context, response['message'], false);
-                // } else {
-                //   showBottomMessage(context, response['message'], true);
-                // }
+
+                if (response['result'] == 1) {
+                  _resetForm();
+                  showBottomMessage(context, response['message'], false);
+                } else {
+                  showBottomMessage(context, response['message'], true);
+                }
               } catch (e) {
-                print("${e}");
-                showBottomMessage(context, "${e}", true);
+                print(e);
+                showBottomMessage(context, "$e", true);
               } finally {
-                // hideLoaderDialog(context);
+                hideLoaderDialog(context);
               }
             }
           },
