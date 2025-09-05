@@ -32,14 +32,15 @@ class StudentBirthdayReportModel {
       id: json['id'],
       studentId: json['student_id'],
       course: json['course'],
-      studentName: json['student_name'],
-      gender: json['gender'],
-      fatherName: json["father_name"],
-      contactNo: json["contact_no"],
-      admissionNo: json["admission_no"],
-      dob: json["dob"],
-      profileImage: json["profile_image"],
-      birthdayNo: json["birthday_no"],
+      studentName: json['student_name'] ?? "",
+      gender: json['gender'] ?? "",
+      fatherName: json["father_name"] ?? "",
+      contactNo: json["contact_no"] ?? "",
+      admissionNo: json["admission_no"] ?? "",
+      dob: json["dob"] ?? "",
+      profileImage: json["profile_image"] ?? "",
+      birthdayNo: json["birthday_no"] ?? "",
+      birthdayCard:json['birthday_card'] ?? ""
     );
   }
 }

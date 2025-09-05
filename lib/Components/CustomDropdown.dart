@@ -24,7 +24,7 @@ class CustomDropdown extends StatefulWidget {
     this.value,
     this.validator,
     this.itemMapper,
-    this.label
+    this.label,
   }) : super(key: key);
 
   @override
@@ -60,7 +60,8 @@ class _CustomDropdownState extends State<CustomDropdown> {
   void didUpdateWidget(covariant CustomDropdown oldWidget) {
     super.didUpdateWidget(oldWidget);
     final newValue = widget.selectedValue ?? widget.value;
-    if (newValue != oldWidget.selectedValue || widget.items != oldWidget.items) {
+    if (newValue != oldWidget.selectedValue ||
+        widget.items != oldWidget.items) {
       setState(() {
         _selectedValue = getValidValue(newValue);
       });
@@ -74,7 +75,6 @@ class _CustomDropdownState extends State<CustomDropdown> {
 
   @override
   Widget build(BuildContext context) {
-
     final uiTheme = Provider.of<UiThemeProvider>(context);
     return DropdownButtonFormField<dynamic>(
       value: getValidValue(_selectedValue),
@@ -82,16 +82,23 @@ class _CustomDropdownState extends State<CustomDropdown> {
       decoration: InputDecoration(
         labelText: widget.label ?? widget.hint,
         hintText: widget.hint,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
         ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(
             color: uiTheme.inputBorderColor ?? Colors.grey.shade400,
-            width: 1.0,
           ),
           borderRadius: BorderRadius.circular(12),
+        ),
+        labelStyle: TextStyle(
+          color:
+              uiTheme.inputBorderColor ??
+              Colors.grey.shade600, // set your desired color
+          fontWeight: FontWeight.bold, // set your desired font weight
+          fontSize: 16, // optional: set font size
         ),
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(
@@ -115,20 +122,30 @@ class _CustomDropdownState extends State<CustomDropdown> {
                   text,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
               if (count != null)
                 Container(
                   margin: const EdgeInsets.only(left: 10),
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.green,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
                     count.toString(),
-                    style: const TextStyle(fontSize: 9, color: Colors.white, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 9,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
             ],
@@ -149,27 +166,39 @@ class _CustomDropdownState extends State<CustomDropdown> {
                   text,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
               if (count != null)
                 Container(
                   margin: const EdgeInsets.only(left: 10),
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.green,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
                     count.toString(),
-                    style: const TextStyle(fontSize: 9, color: Colors.white, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 9,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
             ],
           ),
         );
       }).toList(),
-      validator: widget.validator != null ? (val) => widget.validator!(val) : null,
+      validator: widget.validator != null
+          ? (val) => widget.validator!(val)
+          : null,
       onChanged: (value) {
         setState(() {
           _selectedValue = value;

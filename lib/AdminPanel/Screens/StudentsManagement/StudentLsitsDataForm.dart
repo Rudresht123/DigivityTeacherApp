@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:digivity_admin_app/Components/ApiMessageWidget.dart';
 import 'package:digivity_admin_app/Components/BackgrounWeapper.dart';
 import 'package:digivity_admin_app/Components/CardContainer.dart';
 import 'package:digivity_admin_app/Components/CourseComponent.dart';
@@ -98,17 +99,21 @@ class _StudentListsDataFormState extends State<StudentListsDataForm> {
           onPressed: () async {
             if (_formKey.currentState!.validate()) {
               showLoaderDialog(context);
-
-              await Provider.of<StudentDataProvider>(context, listen: false)
-                  .fetchStudents(
-                courseId: selectedCourseId!,
-                sortByMethod: selectedSortBy!,
-                orderByMethod: selectedStudentSort ?? 'asc',
-                selectedStatus: selectedStatus ?? 'active',
-              );
-
-              hideLoaderDialog(context);
-              context.pushNamed('student-search');
+              try {
+                await Provider.of<StudentDataProvider>(context, listen: false)
+                    .fetchStudents(
+                  courseId: selectedCourseId!,
+                  sortByMethod: selectedSortBy!,
+                  orderByMethod: selectedStudentSort ?? 'asc',
+                  selectedStatus: selectedStatus ?? 'active',
+                );
+              }catch(e){
+                showBottomMessage(context, "${e}", true);
+              }
+              finally {
+                hideLoaderDialog(context);
+                context.pushNamed('student-search');
+              }
             }
           },
         ),

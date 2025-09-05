@@ -1,5 +1,8 @@
+import 'package:digivity_admin_app/AdminPanel/Models/GlobalModels/AddStudentModel.dart';
 import 'package:digivity_admin_app/AdminPanel/Models/GlobalModels/SubjectModel.dart';
+import 'package:digivity_admin_app/AdminPanel/Models/Studdent/StudentModel.dart';
 import 'package:digivity_admin_app/Components/Loader.dart';
+import 'package:digivity_admin_app/Helpers/StudentsData.dart';
 import 'package:digivity_admin_app/helpers/CommonFunctions.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -11,7 +14,9 @@ class CourseComponent extends StatefulWidget {
   final Function(String)? onChanged;
   final Function(dynamic)? validator;
   final bool? isSubject;
+  final String? forData;
   final Function(List<SubjectModel>)? onSubjectListChanged;
+  final Function(List<StudentModel>)? onStudentListChanged;
 
   const CourseComponent({
     Key? key,
@@ -20,6 +25,8 @@ class CourseComponent extends StatefulWidget {
     this.validator,
     this.isSubject,
     this.onSubjectListChanged,
+    this.onStudentListChanged,
+    this.forData,
   }) : super(key: key);
 
   @override
@@ -34,7 +41,10 @@ class _CourseComponentState extends State<CourseComponent> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final dashboardProvider = Provider.of<DashboardProvider>(context, listen: false);
+      final dashboardProvider = Provider.of<DashboardProvider>(
+        context,
+        listen: false,
+      );
       final courseList = dashboardProvider.courseDropdownMap ?? [];
 
       if (courseList.isNotEmpty) {
@@ -51,16 +61,19 @@ class _CourseComponentState extends State<CourseComponent> {
   @override
   Widget build(BuildContext context) {
     final dashboardProvider = Provider.of<DashboardProvider>(context);
-    final List<Map<String, String>> rawList = dashboardProvider.courseDropdownMap;
+    final List<Map<String, String>> rawList =
+        dashboardProvider.courseDropdownMap;
 
     // Add default option at the top
     final List<Map<String, dynamic>> courseList = [
       {'id': '', 'value': 'Please Select Course'}, // Avoid null here
-      ...rawList.map((e) => {
-        'id': e['id'] ?? '',
-        'value': e['value'] ?? 'Unknown',
-        'count': e['count'] ?? '0',
-      })
+      ...rawList.map(
+        (e) => {
+          'id': e['id'] ?? '',
+          'value': e['value'] ?? 'Unknown',
+          'count': e['count'] ?? '0',
+        },
+      ),
     ];
 
     return Column(
@@ -70,7 +83,9 @@ class _CourseComponentState extends State<CourseComponent> {
           items: courseList,
           displayKey: 'value',
           valueKey: 'id',
-          validator: widget.validator != null ? (val) => widget.validator!(val) : null,
+          validator: widget.validator != null
+              ? (val) => widget.validator!(val)
+              : null,
           hint: "Choose a course",
           selectedValue: selectedCourse,
           onChanged: (value) async {
@@ -78,10 +93,25 @@ class _CourseComponentState extends State<CourseComponent> {
               selectedCourse = value;
             });
 
-            if ((widget.isSubject ?? false) && selectedCourse != null && selectedCourse!.isNotEmpty) {
+            if ((widget.isSubject ?? false) &&
+                selectedCourse != null &&
+                selectedCourse!.isNotEmpty) {
               showLoaderDialog(context);
-              final subjects = await CustomFunctions().getCourseSubjects(selectedCourse!);
-              widget.onSubjectListChanged?.call(subjects);
+
+              if (widget.forData! == "students") {
+                final students = await StudentsData().fetchStudents(
+                  courseId: selectedCourse,
+                  sortByMethod: "asc",
+                  orderByMethod: "roll_no",
+                  selectedStatus: "active",
+                );
+                widget.onStudentListChanged?.call(students);
+              } else {
+                final subjects = await CustomFunctions().getCourseSubjects(
+                  selectedCourse!,
+                );
+                widget.onSubjectListChanged?.call(subjects);
+              }
               hideLoaderDialog(context);
             }
 

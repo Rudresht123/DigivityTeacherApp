@@ -1,5 +1,7 @@
 import 'package:digivity_admin_app/AdminPanel/AuthenticationMultiuser/MultiSchoolApp.dart';
 import 'package:digivity_admin_app/AdminPanel/Dashboard.dart';
+import 'package:digivity_admin_app/AdminPanel/Screens/OnlineClass/AddOnlineClass.dart';
+import 'package:digivity_admin_app/AdminPanel/Screens/OnlineClass/OnlineClassList.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/Calendar/CalendarWithEvents.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/CommunicationManagement/CommunicationIndex.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/CommunicationManagement/SendSMS/ComposeSms.dart';
@@ -47,6 +49,9 @@ import 'package:digivity_admin_app/AdminPanel/Screens/StudentAttendanceReports/D
 import 'package:digivity_admin_app/AdminPanel/Screens/StudentAttendanceReports/DayWiseStudentAttendanceReportScreen.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/StudentAttendanceReports/StaffAttendanceReportForm.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/StudentAttendanceReports/StudentAttendaceReports.dart';
+import 'package:digivity_admin_app/AdminPanel/Screens/StudentComplaint/AddStudentComplaint.dart';
+import 'package:digivity_admin_app/AdminPanel/Screens/StudentComplaint/ComplaintList.dart';
+import 'package:digivity_admin_app/AdminPanel/Screens/StudentComplaint/FliterStudentComplaint.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/StudentLeave/FillterStudentDataForLeave.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/StudentLeave/StudentLeaveRecordScreen.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/StudentsManagement/EditStudentDetails.dart';
@@ -872,6 +877,48 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) {
         final formData = state.extra as Map<String, dynamic>?;
         return StudentLeaveRecordScreen(formData: formData);
+      },
+    ),
+
+    /// Student Online Class Section Start Here
+    GoRoute(
+      name: 'student-online-classes',
+      path: '/student-online-classes',
+      builder: (context, state) {
+        return OnlineClassList();
+      },
+    ),
+
+    GoRoute(
+      name: 'add-online-classes',
+      path: '/add-online-classes',
+      builder: (context, state) {
+        return AddOnlineClass();
+      },
+    ),
+
+    /// Student Complaint Section Start Here
+    GoRoute(
+      name: "student-complaint-filter",
+      path: "/student-complaint-filter",
+      builder: (context, state) {
+        return FilterStudentComplaint();
+      },
+    ),
+    GoRoute(
+      name: "student-raised-complaint",
+      path: "/student-raised-complaint",
+      builder: (context, state) {
+        final formdata = state.extra as Map<String, dynamic>;
+        return ComplaintList(formdata: formdata);
+      },
+    ),
+
+    GoRoute(
+      name: "add-student-complaint",
+      path: "/add-student-complaint",
+      builder: (context, state) {
+        return AddStudentComplaint();
       },
     ),
   ],

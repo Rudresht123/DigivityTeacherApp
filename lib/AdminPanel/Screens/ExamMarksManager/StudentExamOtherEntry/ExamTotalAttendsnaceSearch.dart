@@ -23,11 +23,12 @@ class _ExamTotalAttendsnaceSearch extends State<ExamTotalAttendsnaceSearch>{
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String? selectedCourse;
+  bool isLoading = false;
   int? selectedExamTerm;
   String? course;
   String? examTerm;
   String? selectdForAttendance;
-  bool isLoading = false;
+
   final List<Map<String,dynamic>> forattendance = [
     {"id":'student','value':"Student Total Attendance"},
     {"id":'class','value':"Class Total Attendance"},

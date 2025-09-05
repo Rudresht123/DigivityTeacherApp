@@ -302,11 +302,11 @@ String getRouteForModule(String moduleId) {
     case 'exam-result':
       return 'exam-result';
     case 'student-complaint':
-      return 'student-complaint';
+      return 'student-complaint-filter';
     case 'activity-gallery':
       return 'activity-gallery';
     case 'online-class':
-      return 'online-class';
+      return 'student-online-classes';
     case 'staff-attendance':
       return 'mark-staff-attendance';
     case 'school-news':

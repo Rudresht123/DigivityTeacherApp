@@ -3,7 +3,7 @@ import 'package:digivity_admin_app/AdminPanel/Models/Studdent/UpdateFieldList.da
 import 'package:digivity_admin_app/Authentication/SharedPrefHelper.dart';
 import 'package:digivity_admin_app/Helpers/getApiService.dart';
 
-class StudentsData{
+class StudentsData {
   int? userId;
   String? token;
   dynamic response;
@@ -20,8 +20,7 @@ class StudentsData{
     required String? orderByMethod,
     required String? selectedStatus,
   }) async {
-
-    if(userId==null && token==null){
+    if (userId == null && token == null) {
       await init();
     }
     final url = "api/MobileApp/teacher/$userId/StudentList";
@@ -29,7 +28,7 @@ class StudentsData{
     final body = {
       "course_id": courseId,
       "sort_by_method": 'sortBy',
-      "order_by": sortByMethod,
+      "order_by": sortByMethod ?? "",
       "student_status": selectedStatus,
     };
 
@@ -40,7 +39,6 @@ class StudentsData{
           response['success'] != null &&
           response['success'] is List) {
         final List<dynamic> studentData = response['success'];
-
 
         return studentData
             .map((item) => StudentModel.fromJson(item as Map<String, dynamic>))
@@ -74,7 +72,6 @@ class StudentsData{
     }).toList();
   }
 
-
   Future<List<UpdateFieldList>> getFieldsForUpdate() async {
     if (userId == null && token == null) {
       await init();
@@ -87,7 +84,6 @@ class StudentsData{
         response['success'] is List &&
         response['success'].isNotEmpty &&
         response['success'][0]['fieldlist'] != null) {
-
       final List<dynamic> fieldlist = response['success'][0]['fieldlist'];
 
       return fieldlist
@@ -98,7 +94,6 @@ class StudentsData{
     // Return an empty list if data not found or response is invalid
     return [];
   }
-
 
   String? getFieldValueFromStudent(StudentModel student, String fieldName) {
     switch (fieldName) {
@@ -154,8 +149,4 @@ class StudentsData{
         return '';
     }
   }
-
-
-
-
 }

@@ -46,7 +46,6 @@ class _AddNoticeScreen extends State<AddNoticeScreen> {
   List<String> selectedstaffs = [];
   List<File> selectedFiles = [];
   AssignmentType _selectedType = AssignmentType.student;
-
   @override
   void initState() {
     super.initState();

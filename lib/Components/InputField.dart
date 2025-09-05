@@ -48,6 +48,11 @@ class CustomTextField extends StatelessWidget {
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
           ),
+          labelStyle: TextStyle(
+            color: uiTheme.inputBorderColor ?? Colors.grey.shade600,          // set your desired color
+            fontWeight: FontWeight.bold, // set your desired font weight
+            fontSize: 16,                // optional: set font size
+          ),
           focusedBorder: OutlineInputBorder(
             borderSide: BorderSide(
               color: uiTheme.inputBorderColor ?? Colors.blue, // dynamic color

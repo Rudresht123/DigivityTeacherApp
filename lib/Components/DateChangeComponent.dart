@@ -3,22 +3,33 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class DateChangeComonent extends StatefulWidget {
-  final String? selectedDate;
-  final VoidCallback? onTap;
-  DateChangeComonent({Key? key, required this.selectedDate, this.onTap});
+  final DateTime selectedDate;
+  final ValueChanged<DateTime>? onDateChanged;
+
+  const DateChangeComonent({
+    Key? key,
+    required this.selectedDate,
+    this.onDateChanged,
+  }) : super(key: key);
+
   @override
-  State<StatefulWidget> createState() {
-    return _DateChangeComonent();
-  }
+  State<StatefulWidget> createState() => _DateChangeComonent();
 }
 
 class _DateChangeComonent extends State<DateChangeComonent> {
-  DateTime selectedDate = DateTime.now();
+  late DateTime _selectedDate;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedDate = widget.selectedDate;
+  }
 
   void _changeDate(int days) {
     setState(() {
-      selectedDate = selectedDate.add(Duration(days: days));
+      _selectedDate = _selectedDate.add(Duration(days: days));
     });
+    widget.onDateChanged?.call(_selectedDate);
   }
 
   String _formatDate(DateTime date) {
@@ -30,18 +41,7 @@ class _DateChangeComonent extends State<DateChangeComonent> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Container(
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey, width: 1),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () {
-              _changeDate(-1);
-            },
-          ),
-        ),
+        _buildArrowButton(Icons.arrow_back, -1),
         Container(
           padding: EdgeInsets.symmetric(
             horizontal: MediaQuery.of(context).size.width * 0.09,
@@ -53,23 +53,22 @@ class _DateChangeComonent extends State<DateChangeComonent> {
             borderRadius: BorderRadius.circular(8),
           ),
           child: Text(
-            _formatDate(selectedDate),
+            _formatDate(_selectedDate),
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
         ),
-        Container(
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey, width: 1),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: IconButton(
-            icon: Icon(Icons.arrow_forward),
-            onPressed: () {
-              _changeDate(1);
-            },
-          ),
-        ),
+        _buildArrowButton(Icons.arrow_forward, 1),
       ],
+    );
+  }
+
+  Widget _buildArrowButton(IconData icon, int days) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey, width: 1),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: IconButton(icon: Icon(icon), onPressed: () => _changeDate(days)),
     );
   }
 }
