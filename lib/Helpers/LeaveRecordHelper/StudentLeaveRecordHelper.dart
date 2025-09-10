@@ -43,6 +43,31 @@ class StudentLeaveRecordHelper {
     }
   }
 
+  /// Student Leave Request Cancle
+  Future<Map<String, dynamic>> leaveRecordStatus(
+    Map<String, dynamic>? formdata,
+  ) async {
+    if (userId == null || token == null) {
+      await init();
+    }
+    try {
+      final String url = "api/MobileApp/teacher/$userId/LeaveStatus";
+      final response = await getApiService.postRequestData(
+        url,
+        token!,
+        formdata!,
+      );
+
+      if (response['result'] == 1) {
+        return response;
+      } else {
+        return {};
+      }
+    } catch (e) {
+      return {};
+    }
+  }
+
   Color getLeaveStatusColor(String status) {
     switch (status) {
       case "Pending":
@@ -68,6 +93,4 @@ class StudentLeaveRecordHelper {
         return Icons.info;
     }
   }
-
-
 }

@@ -1,16 +1,16 @@
-
 import 'dart:io';
 
 import 'package:digivity_admin_app/AdminPanel/Models/GlobalModels/SubjectModel.dart';
+import 'package:digivity_admin_app/AdminPanel/Models/LeaveRecord/LeaveTypeModel.dart';
 import 'package:digivity_admin_app/Authentication/SharedPrefHelper.dart';
 import 'package:digivity_admin_app/Helpers/getApiService.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 class CustomFunctions {
   int? userId;
   int? userId1;
   String? token;
   dynamic response;
-
 
   CustomFunctions();
 
@@ -49,31 +49,20 @@ class CustomFunctions {
 
     final sessionslist = response['success'];
     final academicSessionsList = List<Map<String, dynamic>>.from(
-        sessionslist['academic_sessions'] ?? []);
+      sessionslist['academic_sessions'] ?? [],
+    );
     final financialSessionsList = List<Map<String, dynamic>>.from(
-        sessionslist['financial_session'] ?? []);
+      sessionslist['financial_session'] ?? [],
+    );
 
     final activeAcademicId = sessionslist["active_academic"];
     final activeFinancialId = sessionslist["active_financial"];
 
-
     return [
-      {
-        'key': 'academic_sessions',
-        'value': academicSessionsList,
-      },
-      {
-        'key': 'financial_sessions',
-        'value': financialSessionsList,
-      },
-      {
-        'key': 'active_academic',
-        'value': activeAcademicId
-      },
-      {
-        'key': 'active_financial',
-        'value': activeFinancialId
-      }
+      {'key': 'academic_sessions', 'value': academicSessionsList},
+      {'key': 'financial_sessions', 'value': financialSessionsList},
+      {'key': 'active_academic', 'value': activeAcademicId},
+      {'key': 'active_financial', 'value': activeFinancialId},
     ];
   }
 
@@ -85,11 +74,7 @@ class CustomFunctions {
       await init();
     }
 
-    final formData = {
-      'academic_id': academicId,
-      'financial_id': financialId,
-    };
-
+    final formData = {'academic_id': academicId, 'financial_id': financialId};
 
     // Optional: make POST request if needed
     final url = "api/MobileApp/Common/UserYearChange/$userId/change";
@@ -98,8 +83,7 @@ class CustomFunctions {
     return response;
   }
 
-
-//   Dial Phone Number function
+  //   Dial Phone Number function
 
   Future<void> dialPhoneNumber(String phoneNumber) async {
     final Uri telUri = Uri(scheme: 'tel', path: phoneNumber);
@@ -113,15 +97,15 @@ class CustomFunctions {
     }
   }
 
-  Future<Map<String, dynamic>> updateStudentAcount(String studentId,
-      String status, String Remark) async {
+  Future<Map<String, dynamic>> updateStudentAcount(
+    String studentId,
+    String status,
+    String Remark,
+  ) async {
     if (userId == null || token == null) {
       await init();
     }
-    final formData = {
-      'status': status,
-      'remark': Remark,
-    };
+    final formData = {'status': status, 'remark': Remark};
 
     final url = "api/MobileApp/teacher/StudentStatus/$studentId/Update";
     final response = await getApiService.postRequestData(url, token!, formData);
@@ -129,8 +113,11 @@ class CustomFunctions {
     return response;
   }
 
-//   Attedance Reports Section Start Here
-  Future<String?> fetchDayWiseAttendanceHtml(String courseId,String reportDate) async {
+  //   Attedance Reports Section Start Here
+  Future<String?> fetchDayWiseAttendanceHtml(
+    String courseId,
+    String reportDate,
+  ) async {
     if (userId == null || token == null) {
       await init(); // Your user/token initialization logic
     }
@@ -139,8 +126,8 @@ class CustomFunctions {
 
     final formData = {
       'course_id': courseId,
-      'from_date':reportDate,
-      'to_date':reportDate
+      'from_date': reportDate,
+      'to_date': reportDate,
     };
 
     final response = await getApiService.postRequestData(url, token!, formData);
@@ -154,7 +141,6 @@ class CustomFunctions {
 
     return null;
   }
-
 
   Future<String?> fetchCourseAttendanceHtml(String reportDate) async {
     if (userId == null || token == null) {
@@ -163,10 +149,7 @@ class CustomFunctions {
 
     final url = "api/MobileApp/teacher/$userId/Coursewiseattendancereport";
 
-    final formData = {
-      'from_date':reportDate,
-      'to_date':reportDate
-    };
+    final formData = {'from_date': reportDate, 'to_date': reportDate};
 
     final response = await getApiService.postRequestData(url, token!, formData);
 
@@ -179,7 +162,6 @@ class CustomFunctions {
 
     return null;
   }
-
 
   Future<List<SubjectModel>> getCourseSubjects(String courseId) async {
     if (userId == null || token == null) {
@@ -198,29 +180,30 @@ class CustomFunctions {
     return subjects;
   }
 
-
-
-  Future<Map<String,dynamic>> uploadImages(String ForImage,Map<String, dynamic> formData) async{
-
+  Future<Map<String, dynamic>> uploadImages(
+    String ForImage,
+    Map<String, dynamic> formData,
+  ) async {
     try {
       if (userId == null || token == null) {
         await init(); // Ensure userId and token are initialized
       }
-      String url='';
-      if(ForImage =='student') {
+      String url = '';
+      if (ForImage == 'student') {
         url = "api/MobileApp/teacher/$userId/StoreStudentPhoto";
-      }
-      else if(ForImage =='staff'){
+      } else if (ForImage == 'staff') {
         url = "api/MobileApp/teacher/$userId/StoreStaffPhoto";
       }
-      final response = await getApiService.postRequestData(url, token!,formData);
+      final response = await getApiService.postRequestData(
+        url,
+        token!,
+        formData,
+      );
       return response ?? {'status': false, 'message': 'Something went wrong'};
     } catch (e) {
       return {'status': false, 'message': 'Error: $e'};
     }
-
   }
-
 
   /// Fetches and returns user profile data
   Future<Map<String, dynamic>> getAppUserProfileData() async {
@@ -234,11 +217,27 @@ class CustomFunctions {
     return response['success'];
   }
 
+  /// Get Leave Type
+  Future<List<LeaveTypeModel>> getLeaveTypeList() async {
+    if (userId == null || token == null) {
+      await init();
+    }
+    try {
+      final String url = "api/MobileApp/$userId/LeaveType";
+      final response = await getApiService.getRequestData(url, token!);
+
+      if (response["result"] == 1 && response["success"] is List) {
+        final List<dynamic> successresponse = response['success'];
+
+        return successresponse
+            .map((e) => LeaveTypeModel.fromJson(e as Map<String, dynamic>))
+            .toList();
+      }
+
+      return [];
+    } catch (e) {
+      print("Error in getLeaveTypeList: $e");
+      return [];
+    }
+  }
 }
-
-
-
-
-
-
-

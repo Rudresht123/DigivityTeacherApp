@@ -1,6 +1,7 @@
 import 'package:digivity_admin_app/AdminPanel/Models/GlobalModels/AddStudentModel.dart';
 import 'package:digivity_admin_app/AdminPanel/Models/GlobalModels/SubjectModel.dart';
 import 'package:digivity_admin_app/AdminPanel/Models/Studdent/StudentModel.dart';
+import 'package:digivity_admin_app/Components/ApiMessageWidget.dart';
 import 'package:digivity_admin_app/Components/Loader.dart';
 import 'package:digivity_admin_app/Helpers/StudentsData.dart';
 import 'package:digivity_admin_app/helpers/CommonFunctions.dart';
@@ -97,24 +98,28 @@ class _CourseComponentState extends State<CourseComponent> {
                 selectedCourse != null &&
                 selectedCourse!.isNotEmpty) {
               showLoaderDialog(context);
-
-              if (widget.forData! == "students") {
-                final students = await StudentsData().fetchStudents(
-                  courseId: selectedCourse,
-                  sortByMethod: "asc",
-                  orderByMethod: "roll_no",
-                  selectedStatus: "active",
-                );
-                widget.onStudentListChanged?.call(students);
-              } else {
-                final subjects = await CustomFunctions().getCourseSubjects(
-                  selectedCourse!,
-                );
-                widget.onSubjectListChanged?.call(subjects);
+              try {
+                if (widget.forData! == "students") {
+                  final students = await StudentsData().fetchStudents(
+                    courseId: selectedCourse,
+                    sortByMethod: "asc",
+                    orderByMethod: "roll_no",
+                    selectedStatus: "active",
+                  );
+                  widget.onStudentListChanged?.call(students);
+                } else if (widget.forData == "subjects") {
+                  final subjects = await CustomFunctions().getCourseSubjects(
+                    selectedCourse!,
+                  );
+                  widget.onSubjectListChanged?.call(subjects);
+                }
+              } catch (e) {
+                print("${e}");
+                showBottomMessage(context, "${e}", true);
+              } finally {
+                hideLoaderDialog(context);
               }
-              hideLoaderDialog(context);
             }
-
             if (value != null) {
               widget.onChanged?.call(value);
             }

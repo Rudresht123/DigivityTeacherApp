@@ -8,7 +8,6 @@ String formatDate({DateTime? date, String format = 'yyyy-MM-dd'}) {
   return DateFormat(format).format(finalDate);
 }
 
-
 int minutesdifferent(String timeString) {
   final now = DateTime.now();
 
@@ -36,5 +35,10 @@ String currentTime() {
 String? encodeFile(File? file) {
   if (file == null) return null;
   final bytes = file.readAsBytesSync();
-  return    base64Encode(bytes);
+  return base64Encode(bytes);
+}
+
+int getDays(DateTime startDate, DateTime endDate) {
+  int days = endDate.difference(startDate).inDays + 1;
+  return days;
 }

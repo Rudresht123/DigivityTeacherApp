@@ -29,7 +29,6 @@ class _Schoolnotice extends State<Schoolnotice> {
   }
 
   Future<void> fetchedNotice(Map<String, dynamic>? formdata) async {
-    print(formdata);
     setState(() => _isLoading = true);
     try {
       final helper = Noticehelper();
@@ -39,7 +38,6 @@ class _Schoolnotice extends State<Schoolnotice> {
         _filteredNotices = data;
         _isLoading = false;
       });
-
     } catch (e) {
       print('Error fetching Notice: $e');
       setState(() => _isLoading = false);
@@ -48,10 +46,6 @@ class _Schoolnotice extends State<Schoolnotice> {
 
   @override
   Widget build(BuildContext context) {
-
-
-
-
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(kToolbarHeight),
@@ -67,11 +61,20 @@ class _Schoolnotice extends State<Schoolnotice> {
                 onChanged: (value) {
                   final query = value.toLowerCase();
                   setState(() {
-                    _filteredNotices = _notices.where((notice) =>
-                    (notice.noticeTitle ?? '').toLowerCase().contains(query) ||
-                        (notice.course ?? '').toLowerCase().contains(query) ||
-                        (notice.notice ?? '').toLowerCase().contains(query)
-                    ).toList();
+                    _filteredNotices = _notices
+                        .where(
+                          (notice) =>
+                              (notice.noticeTitle ?? '').toLowerCase().contains(
+                                query,
+                              ) ||
+                              (notice.course ?? '').toLowerCase().contains(
+                                query,
+                              ) ||
+                              (notice.notice ?? '').toLowerCase().contains(
+                                query,
+                              ),
+                        )
+                        .toList();
                   });
                 },
               ),
@@ -82,69 +85,73 @@ class _Schoolnotice extends State<Schoolnotice> {
                     : _filteredNotices.isEmpty
                     ? const Center(child: Text('No Notice found'))
                     : ListView.builder(
-                  itemCount: _filteredNotices.length,
-                  itemBuilder: (context, index) {
-                    final notice = _filteredNotices[index];
+                        itemCount: _filteredNotices.length,
+                        itemBuilder: (context, index) {
+                          final notice = _filteredNotices[index];
 
-                    return Noticecard(
-                      noticeId: notice.noticeId,
-                      course: notice.course ?? '',
-                      time: notice.noticeTime ?? '',
-                      noticeNo:notice.noticeNo ?? '',
-                      noticeDate: notice.noticeDate ?? '',
-                      noticeTitle: notice.noticeTitle ?? '',
-                      noticeDescription: notice.notice ?? '',
-                      submittedBy: notice.submittedBy ?? '',
-                      submittedByProfile: notice.submittedByProfile ?? '',
-                      attachments: notice.attachments,
-                      withapp: notice.withApp,
-                      withEmail: notice.withEmail,
-                      withtextSms: notice.withTextSms,
-                      withWebsite: notice.withWebsite,
-                      authorizedBy:notice.authorizeBy,
-                      noticeurls: (notice.urlLink != null && notice.urlLink!.trim().isNotEmpty)
-                          ? notice.urlLink!.split('~').where((e) => e.trim().isNotEmpty).toList()
-                          : <String>[],
+                          return Noticecard(
+                            noticeId: notice.noticeId,
+                            course: notice.course ?? '',
+                            time: notice.noticeTime ?? '',
+                            noticeNo: notice.noticeNo ?? '',
+                            noticeDate: notice.noticeDate ?? '',
+                            noticeTitle: notice.noticeTitle ?? '',
+                            noticeDescription: notice.notice ?? '',
+                            submittedBy: notice.submittedBy ?? '',
+                            submittedByProfile: notice.submittedByProfile ?? '',
+                            attachments: notice.attachments,
+                            withapp: notice.withApp,
+                            withEmail: notice.withEmail,
+                            withtextSms: notice.withTextSms,
+                            withWebsite: notice.withWebsite,
+                            authorizedBy: notice.authorizeBy,
+                            noticeurls:
+                                (notice.urlLink != null &&
+                                    notice.urlLink!.trim().isNotEmpty)
+                                ? notice.urlLink!
+                                      .split('~')
+                                      .where((e) => e.trim().isNotEmpty)
+                                      .toList()
+                                : <String>[],
 
+                            onDelete: () async {
+                              final helper = Noticehelper();
+                              final response = await helper.deleteNotice(
+                                notice.noticeId,
+                              ); // delete from backend
 
-                      onDelete: () async {
-                        final helper = Noticehelper();
-                        final response = await helper.deleteNotice(notice.noticeId); // delete from backend
+                              if (response['result'] == 1) {
+                                await fetchedNotice({}); // refresh list
+                              }
 
-                        if (response['result'] == 1) {
-                          await fetchedNotice({}); // refresh list
-                        }
-
-                        return response;
-                      },
-                    );
-
-                  },
-                ),
+                              return response;
+                            },
+                          );
+                        },
+                      ),
               ),
             ],
           ),
         ),
       ),
       bottomNavigationBar: CommonBottomSheetForUploads(
+        onFilter: () async {
+          final filterData = await showModalBottomSheet<Map<String, dynamic>>(
+            context: context,
+            isScrollControlled: true,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            ),
+            builder: (_) => NoticeFilterBottomSheet(),
+          );
 
-          onFilter: () async {
-            final filterData = await showModalBottomSheet<Map<String, dynamic>>(
-              context: context,
-              isScrollControlled: true,
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-              ),
-              builder: (_) => NoticeFilterBottomSheet(),
-            );
-
-            if (filterData != null) {
-              showLoaderDialog(context);
-               await fetchedNotice(filterData);
-               hideLoaderDialog(context);
-            }
-          },
-          onAdd: () {
+          if (filterData != null) {
+            showLoaderDialog(context);
+            await fetchedNotice(filterData);
+            hideLoaderDialog(context);
+          }
+        },
+        onAdd: () {
           context.pushNamed('add-notice');
         },
         addText: "Add Notice",

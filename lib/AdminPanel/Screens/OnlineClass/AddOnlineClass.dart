@@ -7,6 +7,7 @@ import 'package:digivity_admin_app/Components/CustomDropdown.dart';
 import 'package:digivity_admin_app/Components/FieldSet.dart';
 import 'package:digivity_admin_app/Components/InputField.dart';
 import 'package:digivity_admin_app/Components/SimpleAppBar.dart';
+import 'package:digivity_admin_app/Components/StaffDropdown.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -50,6 +51,7 @@ class _AddOnlineClass extends State<AddOnlineClass> {
                       children: [
                         CourseComponent(
                           isSubject: true,
+                          forData: "subjects",
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return "Select First Course";
@@ -89,7 +91,10 @@ class _AddOnlineClass extends State<AddOnlineClass> {
                         ),
 
                         SizedBox(height: 15),
-
+                        StaffDropdown(
+                          label: "Teacher (Host)",
+                          onChange: (value) {},
+                        ),
                         SizedBox(height: 15),
                         CustomTextField(
                           validator: (value) {
@@ -143,7 +148,9 @@ class _AddOnlineClass extends State<AddOnlineClass> {
           icon: Icons.save,
           onPressed: () {
             if (_formkey.currentState!.validate()) {
-              final formdata = {};
+              final formdata = {
+                "course_section_id":courseId,
+              };
             }
           },
         ),

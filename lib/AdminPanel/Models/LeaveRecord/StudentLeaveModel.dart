@@ -1,40 +1,59 @@
-import 'package:digivity_admin_app/AdminPanel/Models/LeaveRecord/LeaveRecordModel.dart';
+import 'package:digivity_admin_app/AdminPanel/Models/UploadsModel/AssignmentModel.dart';
 
 class StudentLeaveModel {
-  final int studentId;
-  final int dbId;
-  final String profileImage;
-  final String leaveApplyBy;
-  final String? admissionNo;
+  final String lvTitle;
+  final String lvDescription;
+  final String lvStatus;
+  final int lvId;
+  final String applyDate;
+  final String lvFromDate;
+  final String lvToDate;
+  final String lvDays;
   final String? fatherName;
-  final String courseSection;
-  final List<LeaveRecord> leaverecord;
+  final String? courseSection;
+  final List<Attachment> attachment;
+  final String? leaveApplyBy;
+  final String leaveApplyByProfile;
+  final String? admissionNo;
+  final String? lvStatusReason;
 
   StudentLeaveModel({
-    required this.studentId,
-    required this.dbId,
-    required this.profileImage,
-    required this.leaveApplyBy,
-    required this.courseSection,
-    required this.leaverecord,
+    required this.lvTitle,
+    required this.lvDescription,
+    required this.lvStatus,
+    required this.lvId,
+    required this.applyDate,
+    required this.lvFromDate,
+    required this.lvToDate,
+    required this.lvDays,
+    required this.attachment,
+    required this.leaveApplyByProfile,
+    this.fatherName,
+    this.courseSection,
+    this.leaveApplyBy,
     this.admissionNo,
-    this.fatherName
+    this.lvStatusReason
   });
 
   factory StudentLeaveModel.fromJson(Map<String, dynamic> json) {
     return StudentLeaveModel(
-      studentId: json['student_id'] ?? 0,
-      dbId: json['db_id'] ?? 0,
-      admissionNo:json['admission_no'] ?? "",
-      fatherName: json['father_name']??'',
-      profileImage: json['profile_image'] ?? '',
       leaveApplyBy: json['leave_apply_by'] ?? '',
+      lvTitle: json['lv_title'] ?? '',
+      lvDescription: json['lv_description'] ?? '',
+      lvStatusReason:json['leave_status_reason'] ?? '',
+      lvStatus: json['lv_status'] ?? '',
+      lvId: json['lv_id'] ?? 0,
+      applyDate: json['apply_date'] ?? '',
       courseSection: json['courseSection'] ?? '',
-      leaverecord: (json['leaverecord'] as List<dynamic>?)
-          ?.map((e) => LeaveRecord.fromJson(e))
-          .toList() ??
+      lvFromDate: json['lv_from_date'] ?? '',
+      lvToDate: json['lv_to_date'] ?? '',
+      lvDays: json['lv_days'] ?? '',
+      attachment:
+          (json['attachment'] as List<dynamic>?)
+              ?.map((e) => Attachment.fromJson(e))
+              .toList() ??
           [],
+      leaveApplyByProfile: json['leave_apply_by_profile'],
     );
   }
 }
-

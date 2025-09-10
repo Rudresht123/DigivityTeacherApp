@@ -6,12 +6,14 @@ class CommonBottomSheetForUploads extends StatelessWidget {
   final VoidCallback onFilter;
   final VoidCallback onAdd;
   final String addText;
+  final String? filterText;
 
   const CommonBottomSheetForUploads({
     super.key,
     required this.onFilter,
     required this.onAdd,
     required this.addText,
+    this.filterText = "Filter"
   });
 
   @override
@@ -32,8 +34,8 @@ class CommonBottomSheetForUploads extends StatelessWidget {
                 child: ElevatedButton.icon(
                   onPressed: onFilter,
                   icon: const Icon(Icons.search, color: Colors.black87),
-                  label: const Text(
-                    "Filter",
+                  label: Text(
+                    filterText!,
                     style: TextStyle(
                       color: Colors.black87,
                       fontWeight: FontWeight.w600,

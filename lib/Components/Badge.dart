@@ -15,13 +15,14 @@ class BadgeScreen extends StatelessWidget {
     this.icon,
     this.textStyle,
     this.padding,
-    this.fontSize
+    this.fontSize,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: padding ?? const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding:
+          padding ?? const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(12),
@@ -30,17 +31,14 @@ class BadgeScreen extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (icon != null) ...[
-            Icon(
-              icon,
-              size: fontSize ?? 10,
-              color: Colors.white,
-            ),
+            Icon(icon, size: fontSize ?? 10, color: Colors.white),
             const SizedBox(width: 4),
           ],
           Text(
             text,
-            style: textStyle ??
-                 TextStyle(
+            style:
+                textStyle ??
+                TextStyle(
                   color: Colors.white,
                   fontSize: fontSize ?? 14,
                   fontWeight: FontWeight.bold,

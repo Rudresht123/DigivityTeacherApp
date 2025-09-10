@@ -1,6 +1,6 @@
 import 'package:digivity_admin_app/AdminPanel/Components/CommonBottomSheetForUploads.dart';
 import 'package:digivity_admin_app/AdminPanel/Models/ComplaintModel/ComplaintModel.dart';
-import 'package:digivity_admin_app/AdminPanel/Screens/StudentComplaint/ComplaintCard.dart';
+import 'package:digivity_admin_app/AdminPanel/Screens/StudentsManagement/StudentComplaint/ComplaintCard.dart';
 import 'package:digivity_admin_app/AuthenticationUi/Loader.dart';
 import 'package:digivity_admin_app/Components/ApiMessageWidget.dart';
 import 'package:digivity_admin_app/Components/BackgrounWeapper.dart';

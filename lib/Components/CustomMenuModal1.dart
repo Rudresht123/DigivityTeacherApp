@@ -317,6 +317,8 @@ String getRouteForModule(String moduleId) {
       return 'student-leave';
     case 'my-student-birthday':
       return 'student-birthday-reports';
+    case 'staff-leave':
+      return "staff-applied-leave";
     default:
       return '';
   }

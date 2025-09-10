@@ -70,7 +70,7 @@ class ComplaintCard extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             const Divider(height: 1),
-            const SizedBox(height:5),
+            const SizedBox(height: 5),
 
             // Complaint text
             Container(
@@ -165,16 +165,18 @@ class ComplaintCard extends StatelessWidget {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: complaint.status=="no"
+                  color: complaint.status == "no"
                       ? Colors.orange[100]
                       : Colors.green[100],
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  complaint.status.isEmpty || complaint.status =="no"  ? "Pending" : "Approved",
+                  complaint.status.isEmpty || complaint.status == "no"
+                      ? "Pending"
+                      : "Approved",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: complaint.status=="no"
+                    color: complaint.status == "no"
                         ? Colors.orange[800]
                         : Colors.green[800],
                   ),

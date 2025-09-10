@@ -7,7 +7,6 @@ List<T> FilterRecord<T>({
   final lowerQuery = query.toLowerCase();
 
   return data.where((item) {
-    // Case 1: item is a Map
     if (item is Map<String, dynamic> && mapFields != null) {
       for (var field in mapFields) {
         final value = item[field]?.toString().toLowerCase();
@@ -16,7 +15,6 @@ List<T> FilterRecord<T>({
       return false;
     }
 
-    // Case 2: item is a Model
     if (modelFields != null) {
       for (var getter in modelFields) {
         final value = getter(item)?.toLowerCase() ?? '';

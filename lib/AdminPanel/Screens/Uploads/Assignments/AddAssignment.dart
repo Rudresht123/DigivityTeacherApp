@@ -91,6 +91,7 @@ class _Addassignment extends State<Addassignment> {
                 SizedBox(height: 16),
                 CourseComponent(
                   isSubject: true,
+                  forData: "subjects",
                   onChanged: (value) {
                     courseId = value;
                     setState(() {});

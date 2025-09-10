@@ -35,9 +35,11 @@ import 'package:digivity_admin_app/AdminPanel/Screens/MasterUpdate/FieldUpdateSt
 import 'package:digivity_admin_app/AdminPanel/Screens/MasterUpdate/MasterUpdateIndex.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/MasterUpdate/RollNumberUpdation/SearchStudentListForRollNum.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/MasterUpdate/RollNumberUpdation/StudentListForUpdateRollNum.dart';
-import 'package:digivity_admin_app/AdminPanel/Screens/StaffAttendance/StaffMarkAttendance.dart';
+import 'package:digivity_admin_app/AdminPanel/Screens/StaffManagement/StaffAttendance/StaffMarkAttendance.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/StaffManagement/AddStaffForm.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/StaffManagement/StaffFillterForm.dart';
+import 'package:digivity_admin_app/AdminPanel/Screens/StaffManagement/StaffLeaveModule/AddStaffLeaveRecord.dart';
+import 'package:digivity_admin_app/AdminPanel/Screens/StaffManagement/StaffLeaveModule/StaffAppliedScreen.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/StaffManagement/StaffListScreen.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/StaffManagement/StaffProfile.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/StaffManagement/UpdateStaffProfile.dart';
@@ -49,11 +51,11 @@ import 'package:digivity_admin_app/AdminPanel/Screens/StudentAttendanceReports/D
 import 'package:digivity_admin_app/AdminPanel/Screens/StudentAttendanceReports/DayWiseStudentAttendanceReportScreen.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/StudentAttendanceReports/StaffAttendanceReportForm.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/StudentAttendanceReports/StudentAttendaceReports.dart';
-import 'package:digivity_admin_app/AdminPanel/Screens/StudentComplaint/AddStudentComplaint.dart';
-import 'package:digivity_admin_app/AdminPanel/Screens/StudentComplaint/ComplaintList.dart';
-import 'package:digivity_admin_app/AdminPanel/Screens/StudentComplaint/FliterStudentComplaint.dart';
-import 'package:digivity_admin_app/AdminPanel/Screens/StudentLeave/FillterStudentDataForLeave.dart';
-import 'package:digivity_admin_app/AdminPanel/Screens/StudentLeave/StudentLeaveRecordScreen.dart';
+import 'package:digivity_admin_app/AdminPanel/Screens/StudentsManagement/StudentComplaint/AddStudentComplaint.dart';
+import 'package:digivity_admin_app/AdminPanel/Screens/StudentsManagement/StudentComplaint/ComplaintList.dart';
+import 'package:digivity_admin_app/AdminPanel/Screens/StudentsManagement/StudentComplaint/FliterStudentComplaint.dart';
+import 'package:digivity_admin_app/AdminPanel/Screens/StudentsManagement/StudentLeave/FillterStudentDataForLeave.dart';
+import 'package:digivity_admin_app/AdminPanel/Screens/StudentsManagement/StudentLeave/StudentLeaveRecordScreen.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/StudentsManagement/EditStudentDetails.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/StudentsManagement/StudentBirthdayList.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/StudentsManagement/StudentDashboard.dart';
@@ -557,6 +559,48 @@ final GoRouter appRouter = GoRouter(
         return FieldUpdateStudentListSearch();
       },
     ),
+
+    /// Student Leave Section Start Here
+    GoRoute(
+      name: 'student-leave',
+      path: '/student-leave',
+      builder: (context, state) {
+        return FillterStudentDataForLeave();
+      },
+    ),
+    GoRoute(
+      name: 'student-leave-record',
+      path: '/student-leave-record',
+      builder: (context, state) {
+        final formData = state.extra as Map<String, dynamic>?;
+        return StudentLeaveRecordScreen(formData: formData);
+      },
+    ),
+
+    /// Student Complaint Section Start Here
+    GoRoute(
+      name: "student-complaint-filter",
+      path: "/student-complaint-filter",
+      builder: (context, state) {
+        return FilterStudentComplaint();
+      },
+    ),
+    GoRoute(
+      name: "student-raised-complaint",
+      path: "/student-raised-complaint",
+      builder: (context, state) {
+        final formdata = state.extra as Map<String, dynamic>;
+        return ComplaintList(formdata: formdata);
+      },
+    ),
+
+    GoRoute(
+      name: "add-student-complaint",
+      path: "/add-student-complaint",
+      builder: (context, state) {
+        return AddStudentComplaint();
+      },
+    ),
     GoRoute(
       name: 'student-field-update-list',
       path: '/student-field-update-list',
@@ -838,6 +882,24 @@ final GoRouter appRouter = GoRouter(
       },
     ),
 
+
+    /// Staff Leave Section Start Here
+    GoRoute(
+      name: 'staff-applied-leave',
+      path: '/staff-applied-leave',
+      builder: (context, state) {
+        return StaffAppliedScreen();
+      },
+    ),
+    ///
+    GoRoute(
+      name: 'add-staff-leave-record',
+      path: '/add-staff-leave-record',
+      builder: (context, state) {
+        return AddStaffLeaveRecord();
+      },
+    ),
+
     /// School News Section Start Here
     GoRoute(
       name: 'school-news',
@@ -863,23 +925,6 @@ final GoRouter appRouter = GoRouter(
       },
     ),
 
-    /// Student Leave Section Start Here
-    GoRoute(
-      name: 'student-leave',
-      path: '/student-leave',
-      builder: (context, state) {
-        return FillterStudentDataForLeave();
-      },
-    ),
-    GoRoute(
-      name: 'student-leave-record',
-      path: '/student-leave-record',
-      builder: (context, state) {
-        final formData = state.extra as Map<String, dynamic>?;
-        return StudentLeaveRecordScreen(formData: formData);
-      },
-    ),
-
     /// Student Online Class Section Start Here
     GoRoute(
       name: 'student-online-classes',
@@ -894,31 +939,6 @@ final GoRouter appRouter = GoRouter(
       path: '/add-online-classes',
       builder: (context, state) {
         return AddOnlineClass();
-      },
-    ),
-
-    /// Student Complaint Section Start Here
-    GoRoute(
-      name: "student-complaint-filter",
-      path: "/student-complaint-filter",
-      builder: (context, state) {
-        return FilterStudentComplaint();
-      },
-    ),
-    GoRoute(
-      name: "student-raised-complaint",
-      path: "/student-raised-complaint",
-      builder: (context, state) {
-        final formdata = state.extra as Map<String, dynamic>;
-        return ComplaintList(formdata: formdata);
-      },
-    ),
-
-    GoRoute(
-      name: "add-student-complaint",
-      path: "/add-student-complaint",
-      builder: (context, state) {
-        return AddStudentComplaint();
       },
     ),
   ],

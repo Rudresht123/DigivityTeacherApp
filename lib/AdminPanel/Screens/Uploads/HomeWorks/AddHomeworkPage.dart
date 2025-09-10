@@ -73,6 +73,7 @@ class _AddHomeworkPage extends State<AddHomeworkPage> {
               children: [
                 CourseComponent(
                   isSubject: true,
+                  forData: "subjects",
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return "Select First Course";
