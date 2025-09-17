@@ -5,8 +5,9 @@ import 'package:flutter/material.dart';
 class StaffDropdown extends StatefulWidget {
   final Function(dynamic) onChange;
   final Function(dynamic)? validator;
+  final String? selectedvalue;
   final String? label; // just one selected value
-  const StaffDropdown({Key? key,this.label,required this.onChange,this.validator})
+  const StaffDropdown({Key? key,this.label,required this.onChange,this.validator,this.selectedvalue})
     : super(key: key);
 
   @override
@@ -52,6 +53,7 @@ class _StaffDropdownState extends State<StaffDropdown> {
     return staffItems.isEmpty
         ? const Center(child: CircularProgressIndicator())
         : CustomDropdown(
+             selectedValue: widget.selectedvalue ?? selectedStaff,
             label: widget.label ?? "Select Host",
             items: staffItems,
             validator: widget.validator,

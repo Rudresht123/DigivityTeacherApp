@@ -1,4 +1,6 @@
 import 'package:digivity_admin_app/AdminPanel/Models/GlobalModels/SubjectModel.dart';
+import 'package:digivity_admin_app/AuthenticationUi/Loader.dart';
+import 'package:digivity_admin_app/Components/ApiMessageWidget.dart';
 import 'package:digivity_admin_app/Components/BackgrounWeapper.dart';
 import 'package:digivity_admin_app/Components/CardContainer.dart';
 import 'package:digivity_admin_app/Components/CourseComponent.dart';
@@ -8,6 +10,7 @@ import 'package:digivity_admin_app/Components/FieldSet.dart';
 import 'package:digivity_admin_app/Components/InputField.dart';
 import 'package:digivity_admin_app/Components/SimpleAppBar.dart';
 import 'package:digivity_admin_app/Components/StaffDropdown.dart';
+import 'package:digivity_admin_app/Helpers/OnlineClassHelpers/OnlineClassHelper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -27,6 +30,23 @@ class _AddOnlineClass extends State<AddOnlineClass> {
   TextEditingController _classLinkController = TextEditingController();
   TextEditingController _classPeriodTimeController = TextEditingController();
   String? selectedStaff;
+
+  void _resetForm() {
+    setState(() {
+      // Reset controllers
+      _classTimingController.clear();
+      _classLinkController.clear();
+      _classPeriodTimeController.clear();
+
+      // Reset dropdown/selected values
+      _selectedSubjectId = null;
+      selectedStaff = "";
+
+      // Reset courseId if needed
+      courseId = "";
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,6 +72,7 @@ class _AddOnlineClass extends State<AddOnlineClass> {
                         CourseComponent(
                           isSubject: true,
                           forData: "subjects",
+                          initialValue: courseId,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return "Select First Course";
@@ -71,6 +92,7 @@ class _AddOnlineClass extends State<AddOnlineClass> {
                         const SizedBox(height: 16),
                         CustomDropdown(
                           items: subjectList,
+                          selectedValue: _selectedSubjectId,
                           displayKey: 'subject',
                           valueKey: 'id',
                           hint: 'Subject',
@@ -93,7 +115,10 @@ class _AddOnlineClass extends State<AddOnlineClass> {
                         SizedBox(height: 15),
                         StaffDropdown(
                           label: "Teacher (Host)",
-                          onChange: (value) {},
+                          onChange: (value) {
+                            selectedStaff = value;
+                            setState(() {});
+                          },
                         ),
                         SizedBox(height: 15),
                         CustomTextField(
@@ -146,11 +171,32 @@ class _AddOnlineClass extends State<AddOnlineClass> {
         child: CustomBlueButton(
           text: "Add Online Class",
           icon: Icons.save,
-          onPressed: () {
+          onPressed: () async {
             if (_formkey.currentState!.validate()) {
+              showLoaderDialog(context);
               final formdata = {
-                "course_section_id":courseId,
+                "course_section_id": courseId,
+                "subject_id": _selectedSubjectId,
+                "staff_id": selectedStaff,
+                "online_class_timings": _classTimingController.text,
+                "online_class_links": _classLinkController.text,
+                "period_time": _classPeriodTimeController.text,
               };
+              try {
+                final response = await OnlineClassHelper().createOnlineClass(
+                  formdata!,
+                );
+                if (response['result'] == 1) {
+                  _resetForm();
+                  showBottomMessage(context, "${response['message']}", false);
+                } else {
+                  showBottomMessage(context, "${response['message']}", false);
+                }
+              } catch (e) {
+                showBottomMessage(context, "${e}", false);
+              } finally {
+                hideLoaderDialog(context);
+              }
             }
           },
         ),

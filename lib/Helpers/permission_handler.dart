@@ -88,16 +88,23 @@ class PermissionService {
 
 /// Permission For The Device Location
   static Future<bool> requestDeviceLocationPermission() async {
-  if (Platform.isIOS || Platform.isAndroid) {
-    var status = await Permission.location.status;
+    if (!Platform.isAndroid && !Platform.isIOS) return true;
+
+    final status = await Permission.location.status;
+
     if (status.isGranted) return true;
+
     final result = await Permission.location.request();
     if (result.isGranted) return true;
-    if (result.isPermanentlyDenied || result.isRestricted) {
-      return false;
+
+    if (result.isPermanentlyDenied) {
+      // User ne permanently deny kar diya, app settings open karna hoga
+      await openAppSettings();
     }
+
+    return false;
   }
-  return false;
-}
+
+
 }
 

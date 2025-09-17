@@ -6,6 +6,7 @@ class CustomBlueButton extends StatelessWidget {
   final String text;
   final IconData icon;
   final VoidCallback onPressed;
+  final EdgeInsets? padding;
   final Color? bgColour;
   final double? width;
 
@@ -14,6 +15,7 @@ class CustomBlueButton extends StatelessWidget {
     required this.text,
     required this.icon,
     required this.onPressed,
+    this.padding,
     this.bgColour,
     this.width,
   }) : super(key: key);
@@ -26,8 +28,8 @@ class CustomBlueButton extends StatelessWidget {
       width: width,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor:uiTheme.buttonColor ?? Colors.blue,
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          backgroundColor:uiTheme.buttonColor ?? bgColour ?? Colors.blue,
+          padding: padding ?? EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
           ),
@@ -37,6 +39,12 @@ class CustomBlueButton extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
+            Icon(
+              size: 20,
+              icon,
+              color: Colors.white,
+            ),
+            const SizedBox(width: 10),
             Text(
               text,
               style: TextStyle(
@@ -44,12 +52,6 @@ class CustomBlueButton extends StatelessWidget {
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
               ),
-            ),
-            const SizedBox(width: 10),
-            Icon(
-              size: 20,
-              icon,
-              color: Colors.white,
             ),
           ],
         ),

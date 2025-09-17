@@ -46,7 +46,6 @@ class DeviceToken {
         "token_id": firebaseToken,
         "active_status": "1",
       };
-
       final response = await getApiService.postRequestData(url, accessToken!, body);
 
       if (response != null && response['result'] == 1) {

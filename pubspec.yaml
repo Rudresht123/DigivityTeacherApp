@@ -1,4 +1,4 @@
-name: digivity_admin_app
+name: digivity_teacher_app
 description: "A new Flutter project."
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
@@ -67,7 +67,7 @@ flutter:
 
 flutter_native_splash:
   color: "#ffffff"
-  image: assets/images/logo/app_icon1.jpeg
+  image: assets/images/logo/teacherapp.png
   fullscreen: true
   android: true
   ios: true
@@ -75,4 +75,4 @@ flutter_native_splash:
 flutter_icons:
   android: true
   ios: true
-  image_path: assets/images/logo/app_icon1.jpeg
+  image_path: assets/images/logo/teacherapp.png

@@ -1,6 +1,9 @@
 import 'package:digivity_admin_app/AdminPanel/AuthenticationMultiuser/MultiSchoolApp.dart';
 import 'package:digivity_admin_app/AdminPanel/Dashboard.dart';
+import 'package:digivity_admin_app/AdminPanel/Models/OnlineClassModel/OnlineClassDetails.dart';
+import 'package:digivity_admin_app/AdminPanel/Screens/FinanceReports/FormScreens/SiblingWiseFeeDefaultReport.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/OnlineClass/AddOnlineClass.dart';
+import 'package:digivity_admin_app/AdminPanel/Screens/OnlineClass/EditOnlineClass.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/OnlineClass/OnlineClassList.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/Calendar/CalendarWithEvents.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/CommunicationManagement/CommunicationIndex.dart';
@@ -62,6 +65,8 @@ import 'package:digivity_admin_app/AdminPanel/Screens/StudentsManagement/Student
 import 'package:digivity_admin_app/AdminPanel/Screens/StudentsManagement/StudentListScreen.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/StudentsManagement/StudentLsitsDataForm.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/StudentsManagement/StudentProfile.dart';
+import 'package:digivity_admin_app/AdminPanel/Screens/TransportAttendanceScreen/FilterStudentStopwise.dart';
+import 'package:digivity_admin_app/AdminPanel/Screens/TransportAttendanceScreen/StudentTrandportAttendance.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/Uploads/Assignments/AddAssignment.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/Uploads/Assignments/StudentAssignmnet.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/Uploads/Circular/AddCircularScreen.dart';
@@ -299,8 +304,8 @@ final GoRouter appRouter = GoRouter(
     ),
 
     GoRoute(
-      name: 'finance/account-reports',
-      path: '/finance/account-reports',
+      name: 'classwise-student-fee-defaulter-report',
+      path: '/classwise-student-fee-defaulter-report',
       builder: (context, state) {
         return FinanceReports();
       },
@@ -371,10 +376,17 @@ final GoRouter appRouter = GoRouter(
     ),
 
     GoRoute(
-      name: 'classwise-student-fee-defaulter-report',
-      path: '/classwise-student-fee-defaulter-report',
+      name: 'student-fee-defaulter-report',
+      path: '/student-fee-defaulter-report',
       builder: (context, state) {
         return ClassCourseWiseFeeDefaulterReport();
+      },
+    ),
+    GoRoute(
+      name: 'sibling-student-fee-defaulter-report',
+      path: '/sibling-student-fee-defaulter-report',
+      builder: (context, state) {
+        return SiblingWiseFeeDefaultReport();
       },
     ),
 
@@ -882,7 +894,6 @@ final GoRouter appRouter = GoRouter(
       },
     ),
 
-
     /// Staff Leave Section Start Here
     GoRoute(
       name: 'staff-applied-leave',
@@ -891,6 +902,7 @@ final GoRouter appRouter = GoRouter(
         return StaffAppliedScreen();
       },
     ),
+
     ///
     GoRoute(
       name: 'add-staff-leave-record',
@@ -939,6 +951,39 @@ final GoRouter appRouter = GoRouter(
       path: '/add-online-classes',
       builder: (context, state) {
         return AddOnlineClass();
+      },
+    ),
+
+    ///  Edit Class
+    GoRoute(
+      name: 'edit-online-classes',
+      path: '/edit-online-classes',
+      builder: (context, state) {
+        final classDetails = state.extra as OnlineClassDetails;
+        return EditOnlineClass(classDetails: classDetails);
+      },
+    ),
+
+    /// Transport Attendance Section
+    GoRoute(
+      name: 'transport-attendance-filter-student',
+      path: '/transport-attendance-filter-student',
+      builder: (context, state) {
+        return FilterStudentStopwise();
+      },
+    ),
+    GoRoute(
+      name: 'mark-transport-attendance',
+      path: '/mark-transport-attendance',
+      builder: (context, state) {
+        final data = state.extra as Map<String, dynamic>;
+        return StudentTransdportAttendance(
+          routeId: data["routeId"],
+          stopId: data["routeStopId"],
+          attendanceDate: data["attendanceDate"],
+          routeStopName: data["routeStopName"],
+          routename: data["routename"],
+        );
       },
     ),
   ],

@@ -39,17 +39,27 @@ class _StudentMarkAttendance extends State<StudentMarkAttendance> {
 
   Future<void> _fetchData() async {
     showLoaderDialog(context);
-    final provider = Provider.of<StudentAttendanceProvider>(context, listen: false);
-    await provider.fetchAttendanceList(
-      courseId: widget.courseId,
-      selectedSortBy: widget.selectedSortBy ?? 'roll_no',
-      selectedDate: widget.selectedDate,
-    );
-    hideLoaderDialog(context);
+    try {
+      final provider = Provider.of<StudentAttendanceProvider>(
+        context,
+        listen: false,
+      );
+      await provider.fetchAttendanceList(
+        courseId: widget.courseId,
+        selectedSortBy: widget.selectedSortBy ?? 'roll_no',
+        selectedDate: widget.selectedDate,
+      );
+      hideLoaderDialog(context);
 
-    setState(() {
-      _students = provider.attendanceList;
-    });
+      setState(() {
+        _students = provider.attendanceList;
+      });
+    } catch (e) {
+      print("${e}");
+      showBottomMessage(context, "${e}", true);
+    } finally {
+      hideLoaderDialog(context);
+    }
   }
 
   final statusColorMap = {
@@ -61,14 +71,12 @@ class _StudentMarkAttendance extends State<StudentMarkAttendance> {
 
   @override
   Widget build(BuildContext context) {
-
     String? StudentStatus;
     return Scaffold(
       backgroundColor: Colors.transparent,
-      appBar:PreferredSize(
+      appBar: PreferredSize(
         preferredSize: Size.fromHeight(kToolbarHeight),
         child: SimpleAppBar(
-
           titleText: "Student Mark Attendance [${widget.selectedDate}]",
           routeName: 'back',
         ),
@@ -76,83 +84,98 @@ class _StudentMarkAttendance extends State<StudentMarkAttendance> {
       body: BackgroundWrapper(
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 1),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 1),
             child: Column(
               children: [
                 const SizedBox(height: 5),
                 Expanded(
                   child: _students.isNotEmpty
                       ? ListView.separated(
-                    itemCount: _students.length,
-                    separatorBuilder: (context, index) =>
-                        Divider(color: Colors.grey.shade300, height: 1),
-                    itemBuilder: (context, index) {
-                      final student = _students[index];
-                      return Container(
-                        margin: const EdgeInsets.symmetric(vertical: 10),
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-                        decoration: BoxDecoration(
-                          color: statusColorMap[student.attendance.toUpperCase()] ?? Colors.grey.shade200,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Row(
-                          children: [
-                            PopupNetworkImage(imageUrl: student.profileImg),
-                            const SizedBox(width: 14),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                          itemCount: _students.length,
+                          separatorBuilder: (context, index) =>
+                              Divider(color: Colors.grey.shade300, height: 1),
+                          itemBuilder: (context, index) {
+                            final student = _students[index];
+                            return Container(
+                              margin: const EdgeInsets.symmetric(vertical: 10),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 20,
+                              ),
+                              decoration: BoxDecoration(
+                                color:
+                                    statusColorMap[student.attendance
+                                        .toUpperCase()] ??
+                                    Colors.grey.shade200,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
                                 children: [
-                                  Text(
-                                    "Adm No.: ${student.admissionNo} | Roll No.: ${student.rollNo ?? 'N/A'}",
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.grey.shade800,
+                                  PopupNetworkImage(
+                                    imageUrl: student.profileImg,
+                                  ),
+                                  const SizedBox(width: 14),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Adm No.: ${student.admissionNo} | Roll No.: ${student.rollNo ?? 'N/A'}",
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.grey.shade800,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 2),
+                                        Text(
+                                          "${student.studentName} (${student.course})",
+                                          style: const TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 2),
+                                        Text(
+                                          "D/O : ${student.fatherName}",
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            color: Colors.grey.shade700,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    "${student.studentName} (${student.course})",
-                                    style: const TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
+                                  Container(
+                                    padding: const EdgeInsets.all(2),
+                                    decoration: BoxDecoration(
+                                      color: const Color(
+                                        0xFF514197,
+                                      ).withOpacity(0.1),
+                                      shape: BoxShape.circle,
                                     ),
-                                  ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    "D/O : ${student.fatherName}",
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      color: Colors.grey.shade700,
+                                    child: AttendanceStatusButton(
+                                      initialStatus: student.attendance
+                                          .toUpperCase(),
+                                      onStatusChanged: (status) {
+                                        StudentStatus = status;
+                                        Provider.of<StudentAttendanceProvider>(
+                                          context,
+                                          listen: false,
+                                        ).updateAttendanceStatus(
+                                          student.studentId,
+                                          status,
+                                        );
+                                        setState(() {});
+                                      },
                                     ),
                                   ),
                                 ],
                               ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.all(2),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF514197).withOpacity(0.1),
-                                shape: BoxShape.circle,
-                              ),
-                              child: AttendanceStatusButton(
-                                initialStatus: student.attendance.toUpperCase(),
-                                onStatusChanged: (status) {
-                                  StudentStatus=status;
-                                  Provider.of<StudentAttendanceProvider>(context, listen: false)
-                                      .updateAttendanceStatus(student.studentId, status);
-                                  setState(() {
-
-                                  });
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  )
+                            );
+                          },
+                        )
                       : const Center(child: Text("No students found")),
                 ),
               ],
@@ -162,30 +185,35 @@ class _StudentMarkAttendance extends State<StudentMarkAttendance> {
       ),
       bottomNavigationBar: Container(
         color: Colors.white,
-        padding: const EdgeInsets.symmetric(horizontal: 30,vertical: 20),
-    child: CustomBlueButton(
-      text: 'Submit',
-      icon: Icons.check,
-      onPressed: () async {
-        showLoaderDialog(context);
-        final provider = Provider.of<StudentAttendanceProvider>(context, listen: false);
-         final courseId = widget.courseId;
-        final List<Map<String, dynamic>> dataList = _students.map((student) {
-          return {
-            "student_id": student.studentId,
-            "att_date": widget.selectedDate,
-            "current_status": student.attendance.toUpperCase(),
-          };
-        }).toList();
-        final payload = {
-          "attendancesubmitted_classSec": "$courseId",
-          "data": dataList,
-        };
-        final isSuccess = await provider.submitAttendanceData(payload);
-        showBottomMessage(context, isSuccess, false);
-      },
-    ),
-          ),
+        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+        child: CustomBlueButton(
+          text: 'Submit',
+          icon: Icons.check,
+          onPressed: () async {
+            showLoaderDialog(context);
+            final provider = Provider.of<StudentAttendanceProvider>(
+              context,
+              listen: false,
+            );
+            final courseId = widget.courseId;
+            final List<Map<String, dynamic>> dataList = _students.map((
+              student,
+            ) {
+              return {
+                "student_id": student.studentId,
+                "att_date": widget.selectedDate,
+                "current_status": student.attendance.toUpperCase(),
+              };
+            }).toList();
+            final payload = {
+              "attendancesubmitted_classSec": "$courseId",
+              "data": dataList,
+            };
+            final isSuccess = await provider.submitAttendanceData(payload);
+            showBottomMessage(context, isSuccess, false);
+          },
+        ),
+      ),
     );
   }
 }

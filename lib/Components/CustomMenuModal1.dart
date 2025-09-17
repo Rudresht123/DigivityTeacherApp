@@ -1,4 +1,5 @@
 import 'package:digivity_admin_app/AdminPanel/MobileThemsColors/theme_provider.dart';
+import 'package:digivity_admin_app/Components/ApiMessageWidget.dart';
 import 'package:digivity_admin_app/Providers/MenuProvider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -114,8 +115,14 @@ Widget buildModuleGrid(
               return GestureDetector(
                 onTap: () {
                   final route = getRouteForModule(module['module_id']);
-                  if (route.isNotEmpty) {
-                    context.pushNamed(route);
+                  try {
+                    if (route.isNotEmpty) {
+                      context.pushNamed(route);
+                    } else {
+                      showBottomMessage(context, "Opps!! Comming Soon", false);
+                    }
+                  } catch (e) {
+                    showBottomMessage(context, "${e}", false);
                   }
                 },
                 child: Container(
@@ -319,6 +326,8 @@ String getRouteForModule(String moduleId) {
       return 'student-birthday-reports';
     case 'staff-leave':
       return "staff-applied-leave";
+    case 'transport-attendance':
+      return "transport-attendance-filter-student";
     default:
       return '';
   }

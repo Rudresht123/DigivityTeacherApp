@@ -16,40 +16,25 @@ class CustomBottomNavBar extends StatelessWidget {
   }
 
   void _onTap(BuildContext context, int index) {
-    if (index == 2) {
-      showCustomMenuModal(context);
-      return;
-    }
-
     switch (index) {
       case 0:
         context.goNamed('dashboard');
         break;
       case 1:
-        context.goNamed('profile');
+        context.pushNamed('profile');
         break;
       case 2:
-        context.goNamed('schoolNews');
+        context.pushNamed('school-news');
         break;
       case 3:
-        context.goNamed('inbox');
+        context.pushNamed('inbox');
         break;
     }
   }
 
-
-
-
-
-
-
-
   @override
   Widget build(BuildContext context) {
-    final location = GoRouterState
-        .of(context)
-        .uri
-        .toString();
+    final location = GoRouterState.of(context).uri.toString();
     final selectedIndex = _getSelectedIndex(location);
 
     final uiTheme = Provider.of<UiThemeProvider>(context);
@@ -65,19 +50,24 @@ class CustomBottomNavBar extends StatelessWidget {
         _buildNavItem(Icons.home, "Home", 0, selectedIndex, uiTheme),
         _buildNavItem(Icons.person, "Profile", 1, selectedIndex, uiTheme),
         _buildNavItem(
-            Icons.newspaper, "School News", 2, selectedIndex, uiTheme),
+          Icons.newspaper,
+          "School News",
+          2,
+          selectedIndex,
+          uiTheme,
+        ),
         _buildNavItem(Icons.message, "Inbox", 3, selectedIndex, uiTheme),
       ],
     );
   }
 
   BottomNavigationBarItem _buildNavItem(
-      IconData icon,
-      String label,
-      int index,
-      int selectedIndex,
-      UiThemeProvider uiTheme,
-      ) {
+    IconData icon,
+    String label,
+    int index,
+    int selectedIndex,
+    UiThemeProvider uiTheme,
+  ) {
     final isSelected = index == selectedIndex;
 
     return BottomNavigationBarItem(
@@ -86,16 +76,18 @@ class CustomBottomNavBar extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: isSelected
             ? BoxDecoration(
-          color: Colors.blue.withOpacity(0.2), // selected background
-          borderRadius: BorderRadius.circular(16),
-        )
+                color: Colors.blue.withOpacity(0.2), // selected background
+                borderRadius: BorderRadius.circular(16),
+              )
             : null,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               icon,
-              color: isSelected ? Colors.blue : uiTheme.appbarIconColor ?? Colors.black,
+              color: isSelected
+                  ? Colors.blue
+                  : uiTheme.appbarIconColor ?? Colors.black,
             ),
             if (isSelected) ...[
               const SizedBox(height: 4),
@@ -113,5 +105,4 @@ class CustomBottomNavBar extends StatelessWidget {
       ),
     );
   }
-
 }
