@@ -1,20 +1,22 @@
 import 'dart:async';
 import 'package:digivity_admin_app/AdminPanel/MobileThemsColors/theme_provider.dart';
 import 'package:digivity_admin_app/Authentication/SharedPrefHelper.dart';
+import 'package:digivity_admin_app/Components/ApiMessageWidget.dart';
 import 'package:digivity_admin_app/Components/Loader.dart';
+import 'package:digivity_admin_app/Components/NotificationBadge.dart';
 import 'package:digivity_admin_app/Providers/DashboardProvider.dart';
 import 'package:digivity_admin_app/Providers/MenuProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../Helpers/NotificationCounter.dart';
+
 class AppBarComponent extends StatefulWidget {
   final String appbartitle;
 
-  const AppBarComponent({
-    Key? key,
-    required this.appbartitle,
-  }) : super(key: key);
+  const AppBarComponent({Key? key, required this.appbartitle})
+    : super(key: key);
 
   @override
   State<AppBarComponent> createState() => _AppBarComponentState();
@@ -23,23 +25,26 @@ class AppBarComponent extends StatefulWidget {
 class _AppBarComponentState extends State<AppBarComponent> {
   String logo = '';
   String username = '';
+  int? _unreadCount = 0;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getUserData();
+
     });
   }
 
-  Future<void> getUserData() async{
+  Future<void> getUserData() async {
     showLoaderDialog(context);
-    logo = await SharedPrefHelper.getPreferenceValue('profile_image');
-    username = await SharedPrefHelper.getPreferenceValue('name');
+    logo = await SharedPrefHelper.getPreferenceValue('profile_image') ?? "";
+    username = await SharedPrefHelper.getPreferenceValue('name') ?? "";
     hideLoaderDialog(context);
-    setState(() {
-    });
+    setState(() {});
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +66,7 @@ class _AppBarComponentState extends State<AppBarComponent> {
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
-                color: uiTheme.appbarIconColor?? Colors.white,
+                color: uiTheme.appbarIconColor ?? Colors.white,
               ),
             ),
             Spacer(),
@@ -70,40 +75,39 @@ class _AppBarComponentState extends State<AppBarComponent> {
             Row(
               children: [
                 IconButton(
-                  icon: Icon(Icons.refresh, color: uiTheme.appbarIconColor?? Colors.white, size: 20),
+                  icon: Icon(
+                    Icons.refresh,
+                    color: uiTheme.appbarIconColor ?? Colors.white,
+                    size: 20,
+                  ),
                   onPressed: () async {
-                    final dashboardProvider = Provider.of<DashboardProvider>(context, listen: false);
-                    final uiThemeProvider = Provider.of<UiThemeProvider>(context, listen: false);
+                    final dashboardProvider = Provider.of<DashboardProvider>(
+                      context,
+                      listen: false,
+                    );
+                    final uiThemeProvider = Provider.of<UiThemeProvider>(
+                      context,
+                      listen: false,
+                    );
                     await dashboardProvider.fetchDashboardData(context);
                     await uiThemeProvider.loadThemeSettingsFromApi(context);
                     await Provider.of<MenuProvider>(
                       context,
                       listen: false,
                     ).fetchMenuItems();
+
                   },
                 ),
                 SizedBox(width: 15),
                 Stack(
+                  clipBehavior: Clip.none,
                   children: [
-                    Icon(Icons.notifications_none, color: uiTheme.appbarIconColor?? Colors.white, size: 20),
-                    Positioned(
-                      right: 0,
-                      top: 0,
-                      child: Container(
-                        padding: EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: Colors.red,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Text(
-                          '3',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
-                          ),
-                        ),
-                      ),
+                    Icon(
+                      Icons.notifications_none,
+                      color: uiTheme.appbarIconColor ?? Colors.white,
+                      size: 22,
                     ),
+                    NotificationBadge(),
                   ],
                 ),
               ],
@@ -112,13 +116,13 @@ class _AppBarComponentState extends State<AppBarComponent> {
             // Profile + Username
             Container(
               margin: EdgeInsets.symmetric(horizontal: 10),
-              padding: EdgeInsets.symmetric(horizontal:15, vertical: 6),
+              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
               decoration: BoxDecoration(
                 color: Colors.white.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(30),
               ),
               child: InkWell(
-                onTap: (){
+                onTap: () {
                   context.pushNamed('select-another-user');
                 },
                 child: Row(
@@ -128,7 +132,8 @@ class _AppBarComponentState extends State<AppBarComponent> {
                       radius: 14,
                       backgroundImage: logo.isNotEmpty
                           ? NetworkImage(logo) as ImageProvider
-                          : AssetImage('assets/logos/default_profile.png') as ImageProvider,
+                          : AssetImage('assets/logos/default_profile.png')
+                                as ImageProvider,
                     ),
                     SizedBox(width: 8),
                     Text(

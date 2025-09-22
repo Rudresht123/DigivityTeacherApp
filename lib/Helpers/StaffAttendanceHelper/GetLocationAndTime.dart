@@ -9,10 +9,11 @@ Future<Map<String, dynamic>> getLocationAndTime(
   double apiRadius,
   double apiLatitude,
   double apiLongitude,
+    BuildContext context
 ) async {
   try {
     bool hasPermission =
-        await PermissionService.requestDeviceLocationPermission();
+        await PermissionService.requestDeviceLocationPermission(context);
     if (!hasPermission) {
       print("Location permission not granted.");
       return {
@@ -66,11 +67,11 @@ Future<Map<String, dynamic>> getLocationAndTime(
 }
 
 /// Get Current Latitude And Longitude
-Future<Map<String, dynamic>?> getCurrentPositionWithPlace() async {
+Future<Map<String, dynamic>?> getCurrentPositionWithPlace(context) async {
   try {
     // Pehle permission check karo
     bool hasPermission =
-        await PermissionService.requestDeviceLocationPermission();
+        await PermissionService.requestDeviceLocationPermission(context);
     if (!hasPermission) {
       debugPrint("Location permission not granted.");
       return null;

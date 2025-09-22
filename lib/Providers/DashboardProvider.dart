@@ -17,18 +17,18 @@ class DashboardProvider extends ChangeNotifier {
       final userid = await SharedPrefHelper.getPreferenceValue('user_id');
       final token = await SharedPrefHelper.getPreferenceValue('access_token');
 
+
       final url = "api/MobileApp/teacher/$userid/home";
       showLoaderDialog(context);
-      final response = await getApiService.getRequestData(url, token);
+      final response = await getApiService.getRequestData(url, token!);
       final dashboardResponse = DashboardResponse.fromJson(response);
-      this.userInfo = dashboardResponse.success[0].userInfo;
+      this.userInfo = dashboardResponse.success[0].userInfo ?? [];
 
       /// Course Data
       final courseJson = response['success'][0]['course'] as List;
       courseeslist = courseJson
           .map((e) => CourseData.fromJson(e as Map<String, dynamic>))
           .toList();
-
     } catch (e, st) {
       debugPrint("Error fetching dashboard data: $e\n$st");
       showBottomMessage(context, "Null Error", true);

@@ -2,13 +2,14 @@ import 'dart:io';
 
 import 'package:digivity_admin_app/AdminPanel/Models/GlobalModels/SubjectModel.dart';
 import 'package:digivity_admin_app/AdminPanel/Models/LeaveRecord/LeaveTypeModel.dart';
+import 'package:digivity_admin_app/AdminPanel/Models/UserProfileModel.dart';
 import 'package:digivity_admin_app/Authentication/SharedPrefHelper.dart';
 import 'package:digivity_admin_app/Helpers/getApiService.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class CustomFunctions {
   int? userId;
-  int? userId1;
+  int? staffId;
   String? token;
   dynamic response;
 
@@ -17,7 +18,7 @@ class CustomFunctions {
   /// Proper async initializer
   Future<void> init() async {
     userId = await SharedPrefHelper.getPreferenceValue('user_id');
-    userId1 = await SharedPrefHelper.getPreferenceValue('staff_id');
+    staffId = await SharedPrefHelper.getPreferenceValue('staff_id');
     token = await SharedPrefHelper.getPreferenceValue('access_token');
   }
 
@@ -206,16 +207,19 @@ class CustomFunctions {
   }
 
   /// Fetches and returns user profile data
-  Future<Map<String, dynamic>> getAppUserProfileData() async {
-    if (userId == null && token == null || userId1 == null) {
+  Future<UserProfileModel?> getAppUserProfileData() async {
+    if ((userId == null && token == null) || staffId == null) {
       await init();
     }
-    final url = "api/MobileApp/teacher/$userId1/$userId/StaffProfile";
-    print(url);
-    response = await getApiService.getRequestData(url, token!);
-
-    return response['success'];
+    final url = "api/MobileApp/teacher/$userId/$staffId/StaffProfile";
+    final response = await getApiService.getRequestData(url, token!);
+    if (response['result'] == 1 && response['success'] is List && (response['success'] as List).isNotEmpty) {
+      return UserProfileModel.fromJson((response['success'] as List).first as Map<String, dynamic>);
+    } else {
+      return null;
+    }
   }
+
 
   /// Get Leave Type
   Future<List<LeaveTypeModel>> getLeaveTypeList() async {

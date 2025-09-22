@@ -36,7 +36,7 @@ class CustomMenuContainer extends StatelessWidget {
                 children: [
                   Center(
                     child: Text(
-                      "Navigation Menus",
+                      "Navigation Menu",
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,

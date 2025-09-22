@@ -175,8 +175,6 @@ class _StaffUploadImageList extends State<StaffUploadImageList> {
                                     condidatename:
                                     "${staff['full_name'] ?? ''} (${staff['profession'] ?? ''})",
                                     onCameraTap: () async {
-                                      final isGranted =await PermissionService.requestCameraPermission();
-                                      if(isGranted) {
                                         final imageHandler = ImageHandler();
                                         await imageHandler.pickAndResizeImage(
                                             source: ImageSource.camera);
@@ -219,19 +217,8 @@ class _StaffUploadImageList extends State<StaffUploadImageList> {
                                                     "⚠️ No image selected")),
                                           );
                                         }
-                                      }
                                     },
                                       onGalleryTap: () async {
-                                        final isGranted = await PermissionService.requestGalleryPermission();
-
-                                        if (!isGranted) {
-                                          if (!mounted) return; // <- check
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            const SnackBar(content: Text("⚠️ Gallery access denied. Please enable it in settings.")),
-                                          );
-                                          return;
-                                        }
-
                                         final imageHandler = ImageHandler();
                                         await imageHandler.pickAndResizeImageFromGalery(source: ImageSource.gallery);
 

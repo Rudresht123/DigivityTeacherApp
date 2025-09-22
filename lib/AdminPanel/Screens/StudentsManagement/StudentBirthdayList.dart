@@ -26,6 +26,7 @@ class _StudentBirthdayListState extends State<StudentBirthdayList> {
   GlobalKey _formkey = GlobalKey<FormState>();
   List<StudentBirthdayReportModel>? studentBirthdayData;
   String? course;
+  bool isLoding = false;
   @override
   void initState() {
     super.initState();
@@ -42,6 +43,7 @@ class _StudentBirthdayListState extends State<StudentBirthdayList> {
 
   Future<void> getStudentBirthdayData(Map<String, dynamic> formdata) async {
     showLoaderDialog(context);
+    isLoding = true;
     try {
       final response = await StudentBirthdayReport().getStudentBirthdayData(
         formdata,
@@ -52,6 +54,8 @@ class _StudentBirthdayListState extends State<StudentBirthdayList> {
       print("${e}");
       showBottomMessage(context, "${e}", true);
     } finally {
+      isLoding = false;
+      setState(() {});
       hideLoaderDialog(context);
     }
   }
@@ -67,221 +71,169 @@ class _StudentBirthdayListState extends State<StudentBirthdayList> {
         ),
       ),
       body: BackgroundWrapper(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
+        child: Stack(
           children: [
-            CardContainer(
-              margin: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-              child: Form(
-                key: _formkey,
-                child: Column(
-                  children: [
-                    /// Grade/Class dropdown (your existing CourseComponent)
-                    CourseComponent(
-                      onChanged: (value) async {
-                        course = value;
-                        final formdata = {
-                          "course": course,
-                          "birth_day_date": DateFormat(
-                            "dd-MM-yyyy",
-                          ).format(selectedDate),
-                        };
-                        await getStudentBirthdayData(formdata);
-                      },
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    /// Date navigation
-                    DateChangeComonent(
-                      selectedDate: selectedDate,
-                      onDateChanged: (newDate) async {
-                        setState(() {
-                          selectedDate = newDate;
-                        });
-                        final formdata = {
-                          "course": course,
-                          "birth_day_date": DateFormat(
-                            "dd-MM-yyyy",
-                          ).format(selectedDate),
-                        };
-                        await getStudentBirthdayData(formdata);
-                      },
-                    ),
-
-                    const SizedBox(height: 20),
-                    Divider(),
-                  ],
-                ),
-              ),
-            ),
-
-            //   Birthday Template Card Section
-            CardContainer(
-              child: studentBirthdayData == null
-                  ? Center(child: CircularProgressIndicator()) // still loading
-                  : studentBirthdayData!.isEmpty
-                  ? Center(
-                      child: Text(
-                        "Record Not Found !!",
-                        style: TextStyle(
-                          color: Colors.red,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+            // Scrollable content
+            SingleChildScrollView(
+              child: Column(
+                children: [
+                  CardContainer(
+                    margin: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                    child: Form(
+                      key: _formkey,
+                      child: Column(
+                        children: [
+                          CourseComponent(
+                            onChanged: (value) async {
+                              course = value;
+                              final formdata = {
+                                "course": course,
+                                "birth_day_date": DateFormat(
+                                  "dd-MM-yyyy",
+                                ).format(selectedDate),
+                              };
+                              await getStudentBirthdayData(formdata);
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                          DateChangeComonent(
+                            selectedDate: selectedDate,
+                            onDateChanged: (newDate) async {
+                              setState(() {
+                                selectedDate = newDate;
+                              });
+                              final formdata = {
+                                "course": course,
+                                "birth_day_date": DateFormat(
+                                  "dd-MM-yyyy",
+                                ).format(selectedDate),
+                              };
+                              await getStudentBirthdayData(formdata);
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                          Divider(),
+                        ],
                       ),
-                    )
-                  : Column(
-                      children: studentBirthdayData!.map((student) {
-                        return Card(
-                          margin: EdgeInsets.symmetric(
-                            vertical: 8,
-                            horizontal: 5,
-                          ),
+                    ),
+                  ),
 
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Row(
-                              children: [
-                                /// Student Profile Image
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(50),
-                                  child: PopupNetworkImage(
-                                    imageUrl: student.profileImage ?? '',
-                                  ),
+                  // Birthday Cards
+                  CardContainer(
+                    child: isLoding
+                        ? Center(child: CircularProgressIndicator())
+                        : studentBirthdayData == null ||
+                              studentBirthdayData!.isEmpty
+                        ? Center(
+                            child: Text(
+                              "Record Not Found !!",
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          )
+                        : Column(
+                            children: studentBirthdayData!.map((student) {
+                              return Card(
+                                margin: EdgeInsets.symmetric(
+                                  vertical: 8,
+                                  horizontal: 5,
                                 ),
-
-                                SizedBox(width: 12),
-
-                                /// Student Details
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: Row(
                                     children: [
-                                      Text(
-                                        student.studentName,
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(50),
+                                        child: PopupNetworkImage(
+                                          imageUrl: student.profileImage ?? '',
                                         ),
                                       ),
-                                      Text(
-                                        student.course ?? '',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.grey.shade700,
+                                      SizedBox(width: 12),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              student.studentName,
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            Text(
+                                              student.course ?? '',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.grey.shade700,
+                                              ),
+                                            ),
+                                            Text(
+                                              "Birthday: ${student.dob!}",
+                                              style: TextStyle(
+                                                fontSize: 13,
+                                                color: Colors.blueGrey,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                      Text(
-                                        "Birthday: ${student.dob!}",
-                                        style: TextStyle(
-                                          fontSize: 13,
-                                          color: Colors.blueGrey,
-                                        ),
+                                      Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          BadgeScreen(
+                                            text: student.birthdayNo ?? '',
+                                            color: Colors.green,
+                                            fontSize: 10,
+                                            padding: EdgeInsets.symmetric(
+                                              vertical: 1,
+                                              horizontal: 10,
+                                            ),
+                                          ),
+                                          SizedBox(height: 10),
+                                          InkWell(
+                                            onTap: () {},
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                border: Border.all(
+                                                  width: 1,
+                                                  color: Colors.grey.shade400,
+                                                ),
+                                              ),
+                                              child: IconButton(
+                                                onPressed: () async {
+                                                  // Your existing WhatsApp share logic
+                                                },
+                                                icon: Icon(
+                                                  Icons.card_giftcard,
+                                                  color: Colors.pink,
+                                                  size: 28,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
                                 ),
-
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    BadgeScreen(
-                                      text: student.birthdayNo ?? '',
-                                      color: Colors.green,
-                                      fontSize: 10,
-                                      padding: EdgeInsets.symmetric(
-                                        vertical: 1,
-                                        horizontal: 10,
-                                      ),
-                                    ),
-                                    SizedBox(height: 10),
-                                    InkWell(
-                                      onTap: () {},
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(
-                                            10,
-                                          ),
-                                          border: Border.all(
-                                            width: 1,
-                                            color: Colors.grey.shade400,
-                                          ),
-                                        ),
-                                        child: IconButton(
-                                          onPressed: () async {
-                                            try {
-                                              final imageUrl =
-                                                  await StudentBirthdayReport()
-                                                      .openStudentBirthdayCard(
-                                                        student.dob!,
-                                                        student.studentId,
-                                                      );
-
-                                              final phoneNumber = student
-                                                  .contactNo!
-                                                  .replaceAll(
-                                                    RegExp(r'\D'),
-                                                    '',
-                                                  ); // keep only digits
-                                              final studentName =
-                                                  student.studentName;
-                                              final message =
-                                                  "Happy Birthday, $studentName! \n"
-                                                  "Wishing you a day full of joy, laughter, and wonderful memories.\n"
-                                                  "Check out your special birthday card here: $imageUrl\n"
-                                                  "Have an amazing year ahead!";
-
-                                              // Only encode the message
-                                              final encodedMessage =
-                                                  Uri.encodeComponent(message);
-                                              // Construct WhatsApp link
-                                              final whatsappUrl = Uri.parse(
-                                                "https://wa.me/$phoneNumber?text=$encodedMessage",
-                                              );
-                                              if (await canLaunchUrl(
-                                                whatsappUrl,
-                                              )) {
-                                                await launchUrl(whatsappUrl);
-                                              } else {
-                                                showBottomMessage(
-                                                  context,
-                                                  "Could not open WhatsApp",
-                                                  true,
-                                                );
-                                              }
-                                            } catch (e) {
-                                              showBottomMessage(
-                                                context,
-                                                "$e",
-                                                true,
-                                              );
-                                            }
-                                          },
-                                          icon: Icon(
-                                            Icons
-                                                .card_giftcard, // the icon itself
-                                            color: Colors.pink,
-                                            size: 28,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-
-                                /// Birthday Card Link Icon
-                              ],
-                            ),
+                              );
+                            }).toList(),
                           ),
-                        );
-                      }).toList(),
-                    ),
+                  ),
+                ],
+              ),
             ),
+
+
           ],
         ),
       ),

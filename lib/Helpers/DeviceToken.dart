@@ -1,11 +1,10 @@
-
 import 'package:digivity_admin_app/Authentication/SharedPrefHelper.dart';
 import 'package:digivity_admin_app/Helpers/getApiService.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 class DeviceToken {
   int? userId;
-  String? accessToken;  // renamed from 'token' to 'accessToken' to avoid confusion
+  String? accessToken;
 
   DeviceToken();
 
@@ -14,48 +13,64 @@ class DeviceToken {
     accessToken = await SharedPrefHelper.getPreferenceValue('access_token');
   }
 
-  Future<void> getDeviceToken() async {
+  /// Call this function to fetch and save device token safely
+  Future<void> registerDeviceToken() async {
     if (userId == null || accessToken == null) {
       await init();
     }
 
     FirebaseMessaging messaging = FirebaseMessaging.instance;
 
-    // iOS permission request
+    // Request permission
     NotificationSettings settings = await messaging.requestPermission(
       alert: true,
       badge: true,
       sound: true,
     );
 
-    if (settings.authorizationStatus == AuthorizationStatus.authorized ||
-        settings.authorizationStatus == AuthorizationStatus.provisional ||
-        true) {
-      String? firebaseToken = await messaging.getToken();
+    if (settings.authorizationStatus != AuthorizationStatus.authorized &&
+        settings.authorizationStatus != AuthorizationStatus.provisional) {
+      print('Notification permission denied');
+      return;
+    }
 
-      if (firebaseToken == null) {
-        print("Failed to get Firebase token");
-        return;
-      }
+    // Listen for FCM token refresh
+    FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
+      print('FCM Token refreshed: $newToken');
+      await _saveTokenToBackend(newToken);
+    });
 
-      final url = "api/MobileApp/master-admin/$userId/PushNotificationDeviceToken";
-
-      final body = {
-        "appname": "AdminApp",
-        "ac_user_id": userId.toString(),
-        "token_id": firebaseToken,
-        "active_status": "1",
-      };
-      final response = await getApiService.postRequestData(url, accessToken!, body);
-
-      if (response != null && response['result'] == 1) {
-        print('FCM Device Token saved successfully: $firebaseToken');
-      } else {
-        print('FCM Device Token: $firebaseToken');
-        print("Some Bug Not Saved Token");
-      }
+    // Get initial FCM token
+    String? firebaseToken = await messaging.getToken();
+    if (firebaseToken != null) {
+      print('FCM Token obtained: $firebaseToken');
+      await _saveTokenToBackend(firebaseToken);
     } else {
-      print('Notification permission declined');
+      print('FCM Token not available yet, waiting for token refresh...');
+    }
+
+    // Handle foreground messages
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print('Foreground message received: ${message.notification?.title}');
+      // Optionally show a local notification here
+    });
+  }
+
+  /// Save token to backend
+  Future<void> _saveTokenToBackend(String token) async {
+    final url = "api/MobileApp/master-admin/$userId/PushNotificationDeviceToken";
+    final body = {
+      "appname": "AdminApp",
+      "ac_user_id": userId.toString(),
+      "token_id": token,
+      "active_status": "1",
+    };
+    final response = await getApiService.postRequestData(url, accessToken!, body);
+
+    if (response != null && response['result'] == 1) {
+      print('✅ FCM Device Token saved successfully: $token');
+    } else {
+      print('⚠️ Failed to save FCM token: $token');
     }
   }
 }

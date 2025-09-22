@@ -49,8 +49,6 @@ class _StudentMarkAttendance extends State<StudentMarkAttendance> {
         selectedSortBy: widget.selectedSortBy ?? 'roll_no',
         selectedDate: widget.selectedDate,
       );
-      hideLoaderDialog(context);
-
       setState(() {
         _students = provider.attendanceList;
       });

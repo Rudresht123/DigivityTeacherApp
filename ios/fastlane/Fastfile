@@ -1,0 +1,43 @@
+# Fastfile for iOS deployment
+default_platform(:ios)
+
+platform :ios do
+  desc "Build and upload to App Store Connect"
+  lane :release do
+    # Ensure we're in the right directory
+    Dir.chdir("../")
+    
+    # Build the app
+    build_app(
+      workspace: "Runner.xcworkspace",
+      scheme: "Runner",
+      clean: true,
+      export_method: "app-store",
+      skip_codesigning: false,
+      configuration: "Release"
+    )
+    
+    # Upload to App Store Connect
+    upload_to_app_store(
+      force: true,
+      reject_if_possible: true,
+      skip_metadata: true,
+      skip_screenshots: true,
+      submit_for_review: false
+    )
+  end
+  
+  desc "Build for testing"
+  lane :build_only do
+    Dir.chdir("../")
+    
+    build_app(
+      workspace: "Runner.xcworkspace", 
+      scheme: "Runner",
+      clean: true,
+      export_method: "development",
+      skip_codesigning: true,
+      configuration: "Release"
+    )
+  end
+end

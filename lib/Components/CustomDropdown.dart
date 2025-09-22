@@ -36,19 +36,11 @@ class _CustomDropdownState extends State<CustomDropdown> {
 
   List<Map<String, dynamic>> get mappedItems {
     return widget.items.map<Map<String, dynamic>>((item) {
-      final mapItem = (item is Map<String, dynamic>)
-          ? item
-          : widget.itemMapper != null
-          ? widget.itemMapper!(item)
-          : throw Exception("Provide itemMapper for non-Map types");
-
-      return {
-        ...mapItem,
-        widget.valueKey: mapItem[widget.valueKey]?.toString(), // ✅ force string
-      };
+      if (item is Map<String, dynamic>) return item;
+      if (widget.itemMapper != null) return widget.itemMapper!(item);
+      throw Exception("Provide itemMapper for non-Map types");
     }).toList();
   }
-
 
   @override
   void initState() {
@@ -77,13 +69,9 @@ class _CustomDropdownState extends State<CustomDropdown> {
   }
 
   dynamic getValidValue(dynamic value) {
-    final validIds =
-    mappedItems.map((e) => e[widget.valueKey]?.toString()).toSet();
-    final stringValue = value?.toString();
-    return (stringValue != null && validIds.contains(stringValue)) ? stringValue : null;
+    final validIds = mappedItems.map((e) => e[widget.valueKey]).toSet();
+    return (value == null || validIds.contains(value)) ? value : null;
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -102,15 +90,9 @@ class _CustomDropdownState extends State<CustomDropdown> {
         enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(
             color: uiTheme.inputBorderColor ?? Colors.grey.shade400,
+            width: 1.0,
           ),
           borderRadius: BorderRadius.circular(12),
-        ),
-        labelStyle: TextStyle(
-          color:
-              uiTheme.inputBorderColor ??
-              Colors.grey.shade600, // set your desired color
-          fontWeight: FontWeight.bold, // set your desired font weight
-          fontSize: 16, // optional: set font size
         ),
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(

@@ -92,9 +92,10 @@ import 'package:digivity_admin_app/AuthenticationUi/ChangeSessions.dart';
 import 'package:digivity_admin_app/AuthenticationUi/LoginPageScreen.dart';
 import 'package:digivity_admin_app/AuthenticationUi/OnboardingScreen.dart';
 import 'package:digivity_admin_app/AuthenticationUi/SchoolCodeVerification.dart';
-import 'package:digivity_admin_app/AuthenticationUi/SplashScreen.dart';
+import 'package:digivity_admin_app/AuthenticationUi/SplashScreen.dart' hide SchoolCodeVerification;
 import 'package:digivity_admin_app/AuthenticationUi/TwoFactorAuthentication.dart';
 import 'package:digivity_admin_app/AuthenticationUi/UserProfile.dart';
+import 'package:digivity_admin_app/Components/NotificationScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -984,6 +985,16 @@ final GoRouter appRouter = GoRouter(
           routeStopName: data["routeStopName"],
           routename: data["routename"],
         );
+      },
+    ),
+
+
+    /// Notification Screen
+    GoRoute(
+      name: 'notification-screen',
+      path: '/notification-screen',
+      builder: (context, state) {
+        return NotificationScreen();
       },
     ),
   ],

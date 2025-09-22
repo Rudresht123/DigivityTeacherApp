@@ -41,7 +41,6 @@ class _FilterStudentStopwise extends State<FilterStudentStopwise> {
     try {
       final response = await TransportAttendanceHelper().getAssignedRoute();
       routes = response;
-      print(routes);
       setState(() {});
     } catch (e) {
       showBottomMessage(context, "${e}", true);
@@ -56,6 +55,13 @@ class _FilterStudentStopwise extends State<FilterStudentStopwise> {
       final routestops1 = await TransportAttendanceHelper().getRouteStop(
         routeId,
       );
+      if (routestops1.isEmpty) {
+        showBottomMessage(
+          context,
+          "Please Check RouteStop Configuration",
+          true,
+        );
+      }
       setState(() {
         routesstops = routestops1;
       });
@@ -68,7 +74,6 @@ class _FilterStudentStopwise extends State<FilterStudentStopwise> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(kToolbarHeight),
@@ -161,8 +166,8 @@ class _FilterStudentStopwise extends State<FilterStudentStopwise> {
                     "routeId": routeId,
                     "routeStopId": routeStopId,
                     "attendanceDate": _attendacedate.text,
-                    "routeStopName":routeStopName,
-                    "routename":routename,
+                    "routeStopName": routeStopName,
+                    "routename": routename,
                   },
                 );
               } catch (e) {

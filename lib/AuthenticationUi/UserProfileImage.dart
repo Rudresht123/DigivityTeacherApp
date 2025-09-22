@@ -1,4 +1,5 @@
 import 'package:digivity_admin_app/Authentication/SharedPrefHelper.dart';
+import 'package:digivity_admin_app/Components/ApiMessageWidget.dart';
 import 'package:flutter/material.dart';
 
 
@@ -21,10 +22,14 @@ class _UserProfileImageState extends State<UserProfileImage> {
   }
 
   Future<void> loadImage() async {
-    final url = await SharedPrefHelper.getPreferenceValue('profile_image');
-    setState(() {
-      imageUrl = url;
-    });
+    try {
+      final url = await SharedPrefHelper.getPreferenceValue('profile_image');
+      setState(() {
+        imageUrl = url;
+      });
+    }catch(e){
+      showBottomMessage(context, "${e}", true);
+    }
   }
 
   @override

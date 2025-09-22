@@ -1,5 +1,5 @@
 import 'package:digivity_admin_app/AdminPanel/MobileThemsColors/theme_provider.dart';
-import 'package:digivity_admin_app/Components/Loader.dart';
+import 'package:digivity_admin_app/Helpers/permission_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -51,9 +51,12 @@ void showDocumentPickerBottomSheet({
                 child: Icon(Icons.camera_alt, color: Colors.orange),
               ),
               title: const Text("Take Photo from Camera", style: TextStyle(fontWeight: FontWeight.bold)),
-              onTap: () {
-                Navigator.pop(context);
-                onCameraTap();
+              onTap: () async{
+                final camerapermission =await PermissionService.requestCameraPermission(context);
+                if(camerapermission) {
+                  Navigator.pop(context);
+                  onCameraTap();
+                }
               },
             ),
             const SizedBox(height: 10),
@@ -65,9 +68,12 @@ void showDocumentPickerBottomSheet({
                 child: Icon(Icons.photo_library_outlined, color: Colors.pink),
               ),
               title: const Text("Choose from Gallery", style: TextStyle(fontWeight: FontWeight.bold)),
-              onTap: () {
+              onTap: () async{
                 Navigator.pop(context);
-                onGalleryTap();
+                final camerapermission =await PermissionService.requestGalleryPermission(context);
+                if(camerapermission) {
+                  onGalleryTap();
+                }
               },
             ),
             const SizedBox(height: 10),
@@ -79,10 +85,12 @@ void showDocumentPickerBottomSheet({
                 child: Icon(Icons.insert_drive_file, color: Colors.blueAccent),
               ),
               title: const Text("Pick Document", style: TextStyle(fontWeight: FontWeight.bold)),
-              onTap: () {
-
-                Navigator.pop(context);
-                onPickDocument();
+              onTap: () async{
+                 final camerapermission =await PermissionService.requestStoragePermission(context);
+                 if(camerapermission) {
+                   Navigator.pop(context);
+                   onPickDocument();
+                 }
               },
             ),
             const SizedBox(height: 10),

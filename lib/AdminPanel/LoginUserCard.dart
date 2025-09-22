@@ -11,7 +11,6 @@ class UserProfileCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final uiTheme = Provider.of<UiThemeProvider>(context);
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -39,19 +38,19 @@ class UserProfileCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(70),
                       child: user.profileImg.isNotEmpty
                           ? PopupNetworkImage(
-                        imageUrl: user.profileImg,
-                        radius: 40,
-                      )
+                              imageUrl: user.profileImg,
+                              radius: 40,
+                            )
                           : Container(
-                        width: 70,
-                        height: 70,
-                        color: Colors.grey[300],
-                        child: Icon(
-                          Icons.person,
-                          size: 40,
-                          color: Colors.grey[600],
-                        ),
-                      ),
+                              width: 70,
+                              height: 70,
+                              color: Colors.grey[300],
+                              child: Icon(
+                                Icons.person,
+                                size: 40,
+                                color: Colors.grey[600],
+                              ),
+                            ),
                     ),
                     Positioned(
                       bottom: 0,
@@ -88,7 +87,7 @@ class UserProfileCard extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         "Emp. NO. ${user.userNo} | ${user.userInfo}",
-                        style:  TextStyle(
+                        style: TextStyle(
                           fontSize: 14,
                           color: uiTheme.appbarIconColor ?? Colors.black87,
                           fontWeight: FontWeight.w600,
@@ -97,14 +96,16 @@ class UserProfileCard extends StatelessWidget {
                       const SizedBox(height: 6),
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 4),
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.white24,
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
                           "Last Login: ${user.lastLogin}",
-                          style:  TextStyle(
+                          style: TextStyle(
                             fontSize: 12,
                             color: uiTheme.appbarIconColor ?? Colors.black87,
                             fontWeight: FontWeight.w500,
@@ -123,10 +124,13 @@ class UserProfileCard extends StatelessWidget {
             top: 20,
             right: 20,
             child: Container(
-              padding:
-              const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: Colors.green,
+                color: user.todayAttendance == "Absent"
+                    ? Colors.red
+                    : user.todayAttendance == "Late"
+                    ? Colors.orange
+                    : Colors.green,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
@@ -142,6 +146,5 @@ class UserProfileCard extends StatelessWidget {
         ],
       ),
     );
-
   }
 }

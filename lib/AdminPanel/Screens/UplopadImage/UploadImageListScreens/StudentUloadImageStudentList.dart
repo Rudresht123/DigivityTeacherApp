@@ -213,8 +213,6 @@ class _StudentUloadImageStudentList extends State<StudentUloadImageStudentList>{
                                     context: context,
                                     condidatename:  "${student['student_name'] ?? ''} (${student['course'] ?? ''})",
                                     onCameraTap: () async{
-                                      final isGranted = await PermissionService.requestCameraPermission();
-                                      if(isGranted) {
                                         final imageHandler = ImageHandler();
                                         await imageHandler.pickAndResizeImage(
                                             source: ImageSource.camera);
@@ -263,21 +261,12 @@ class _StudentUloadImageStudentList extends State<StudentUloadImageStudentList>{
                                                 "⚠️ No image selected")),
                                           );
                                         }
-                                      }
+
 
 
 
                                     },
                                     onGalleryTap: () async {
-                                      final isGranted = await PermissionService.requestGalleryPermission();
-
-                                      if (!isGranted) {
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          const SnackBar(content: Text("⚠️ Gallery permission denied")),
-                                        );
-                                        return;
-                                      }
-
                                       final imageHandler = ImageHandler();
                                       await imageHandler.pickAndResizeImageFromGalery(
                                         source: ImageSource.gallery,

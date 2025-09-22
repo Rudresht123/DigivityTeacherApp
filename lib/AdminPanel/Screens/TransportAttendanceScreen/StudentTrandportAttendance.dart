@@ -1,12 +1,15 @@
 import 'package:digivity_admin_app/AdminPanel/Components/PopupNetworkImage.dart';
+import 'package:digivity_admin_app/AdminPanel/Components/SearchBox.dart';
 import 'package:digivity_admin_app/AdminPanel/Models/TransportAttendanceModels/StudentTransportAttendanceModel.dart';
 import 'package:digivity_admin_app/Components/ApiMessageWidget.dart';
 import 'package:digivity_admin_app/Components/BackgrounWeapper.dart';
 import 'package:digivity_admin_app/Components/Loader.dart';
 import 'package:digivity_admin_app/Components/SimpleAppBar.dart';
+import 'package:digivity_admin_app/Helpers/FilterRecord.dart';
 import 'package:digivity_admin_app/Helpers/StaffAttendanceHelper/GetLocationAndTime.dart';
 import 'package:digivity_admin_app/Helpers/TransportAttendanceHelper/TransportAttendanceHelper.dart';
 import 'package:digivity_admin_app/Helpers/formatDate.dart';
+import 'package:digivity_admin_app/Helpers/permission_handler.dart';
 import 'package:flutter/material.dart';
 
 /// 🔥 Status Constants (backend ke hisaab se)
@@ -37,12 +40,16 @@ class StudentTransdportAttendance extends StatefulWidget {
 
 class _StudentTransportAttendanceScreenState
     extends State<StudentTransdportAttendance> {
+  List<StudentTransportAttendanceModel> _originalList = [];
   List<StudentTransportAttendanceModel> _students = [];
   Map<int, String> _attendanceMap = {};
+
+  TextEditingController _searchBox = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+    _searchBox.addListener(_filterStudentList);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _fetchData();
     });
@@ -64,8 +71,9 @@ class _StudentTransportAttendanceScreenState
 
       if (mounted) {
         setState(() {
+          _originalList = response;
           _students = response;
-          for (var student in _students) {
+          for (var student in _originalList) {
             _attendanceMap[student.studentId] = student.attendance;
           }
         });
@@ -90,7 +98,7 @@ class _StudentTransportAttendanceScreenState
     if (!mounted) return;
     showLoaderDialog(context);
     try {
-      final position = await getCurrentPositionWithPlace();
+      final position = await getCurrentPositionWithPlace(context);
       final formdata = {
         "attendancesubmitted_transport": "1",
         "data": [
@@ -126,6 +134,28 @@ class _StudentTransportAttendanceScreenState
     }
   }
 
+  void _filterStudentList() {
+    final query = _searchBox.text.toLowerCase();
+    print(query);
+
+    setState(() {
+      if (query.isEmpty) {
+        _students = List.from(_originalList);
+      } else {
+        _students = FilterRecord<StudentTransportAttendanceModel>(
+          data: _originalList,
+          query: query,
+          modelFields: [
+            (student) => student.studentName,
+            (student) => student.rollNo.toString() ?? '',
+            (student) => student.admissionNo ?? '',
+            (student) => student.course ?? '',
+          ],
+        );
+      }
+    });
+  }
+
   /// 🔹 Reusable Attendance Button
   Widget buildAttendanceButton({
     required String label,
@@ -140,14 +170,29 @@ class _StudentTransportAttendanceScreenState
       style: ElevatedButton.styleFrom(
         backgroundColor: bgColor,
         foregroundColor: fgColor,
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 1),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        elevation: 0,
+        elevation: 1,
+        minimumSize: const Size(120, 40),
       ),
       icon: Icon(icon, size: 14),
       label: Text(label, style: const TextStyle(fontSize: 11)),
       onPressed: enabled
-          ? () {
+          ? () async {
+              final locationAccess =
+                  await PermissionService.requestDeviceLocationPermission(
+                    context,
+                  );
+
+              if (!locationAccess) {
+                showBottomMessage(
+                  context,
+                  "Please provide Device Location Access!!",
+                  true,
+                );
+                return;
+              }
+
               setState(() {
                 _attendanceMap[studentId] = status;
               });
@@ -223,9 +268,11 @@ class _StudentTransportAttendanceScreenState
       body: BackgroundWrapper(
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 1),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
             child: Column(
               children: [
+                SearchBox(controller: _searchBox),
+
                 const SizedBox(height: 5),
                 Expanded(
                   child: _students.isNotEmpty
@@ -288,7 +335,7 @@ class _StudentTransportAttendanceScreenState
                             return Container(
                               margin: const EdgeInsets.symmetric(
                                 vertical: 8,
-                                horizontal: 12,
+                                horizontal: 0,
                               ),
                               padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
@@ -313,7 +360,7 @@ class _StudentTransportAttendanceScreenState
                                       imageUrl: student.profileImg,
                                     ),
                                   ),
-                                  const SizedBox(width: 12),
+                                  const SizedBox(width: 10),
 
                                   /// Student Info
                                   Expanded(
@@ -349,46 +396,49 @@ class _StudentTransportAttendanceScreenState
                                   ),
 
                                   /// Action Buttons
-                                  Wrap(
-                                    spacing: 6,
-                                    runSpacing: 6,
-                                    children: [
-                                      buildAttendanceButton(
-                                        label:
-                                            student.pcikedUp != null &&
-                                                student.pcikedUp!.isNotEmpty
-                                            ? "${student.pcikedUp}"
-                                            : "Picked Up",
-                                        icon: pickIcon,
-                                        bgColor: pickBg,
-                                        fgColor: pickFg,
-                                        status: STATUS_PICKED_UP,
-                                        studentId: student.studentId,
-                                        enabled: enablePickedUp,
-                                      ),
-                                      buildAttendanceButton(
-                                        label:
-                                            student.dropepdOut != null &&
-                                                student.dropepdOut!.isNotEmpty
-                                            ? "${student.dropepdOut}"
-                                            : "Drop Out",
-                                        icon: dropIcon,
-                                        bgColor: dropBg,
-                                        fgColor: dropFg,
-                                        status: STATUS_DROPPED_OUT,
-                                        studentId: student.studentId,
-                                        enabled: enableDroppedOut,
-                                      ),
-                                      buildAttendanceButton(
-                                        label: "Absent",
-                                        icon: absIcon,
-                                        bgColor: absBg,
-                                        fgColor: absFg,
-                                        status: STATUS_ABSENT,
-                                        studentId: student.studentId,
-                                        enabled: enableAbsent,
-                                      ),
-                                    ],
+                                  Expanded(
+                                    child: Wrap(
+                                      spacing: 1,
+                                      runSpacing: 1,
+                                      alignment: WrapAlignment.center,
+                                      children: [
+                                        buildAttendanceButton(
+                                          label:
+                                              student.pcikedUp != null &&
+                                                  student.pcikedUp!.isNotEmpty
+                                              ? "${student.pcikedUp}"
+                                              : "Picked Up",
+                                          icon: pickIcon,
+                                          bgColor: pickBg,
+                                          fgColor: pickFg,
+                                          status: STATUS_PICKED_UP,
+                                          studentId: student.studentId,
+                                          enabled: enablePickedUp,
+                                        ),
+                                        buildAttendanceButton(
+                                          label:
+                                              student.dropepdOut != null &&
+                                                  student.dropepdOut!.isNotEmpty
+                                              ? "${student.dropepdOut}"
+                                              : "Drop Out",
+                                          icon: dropIcon,
+                                          bgColor: dropBg,
+                                          fgColor: dropFg,
+                                          status: STATUS_DROPPED_OUT,
+                                          studentId: student.studentId,
+                                          enabled: enableDroppedOut,
+                                        ),
+                                        buildAttendanceButton(
+                                          label: "Absent",
+                                          icon: absIcon,
+                                          bgColor: absBg,
+                                          fgColor: absFg,
+                                          status: STATUS_ABSENT,
+                                          studentId: student.studentId,
+                                          enabled: enableAbsent,
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ],
                               ),
