@@ -33,7 +33,7 @@ class Assignmenthelper{
     }
   }
 
-  Future<Map<String, dynamic>> deleteAssignment(assignmentId) async {
+  Future<Map<String, dynamic>> deleteAssignment(int assignmentId) async {
     try {
       if (userId == null && token == null) {
         await init();

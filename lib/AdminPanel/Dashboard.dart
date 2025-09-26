@@ -29,9 +29,7 @@ class _DashboardState extends State<Dashboard> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initializeDashboard();
-      FirebaseMessaging.instance.getAPNSToken().then((apnsToken) {
-        print("APNs Token: $apnsToken");
-      });
+
     });
   }
 

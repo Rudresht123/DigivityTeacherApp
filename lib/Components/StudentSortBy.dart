@@ -15,8 +15,8 @@ class _StudentsortbyState extends State<Studentsortby> {
 
   final List<Map<String, String>> shortby = [
     {'id': '', 'short_by': 'Please Select Short By'},
-    {'id': 'asc', 'short_by': 'Ascending'},
-    {'id': 'desc', 'short_by': 'Descending'},
+    {'id': 'sortBy', 'short_by': 'Ascending'},
+    {'id': 'sortByDesc', 'short_by': 'Descending'},
   ];
 
   @override

@@ -28,9 +28,6 @@ class ShowAssignmentDetailSheet extends StatelessWidget {
   final String submittedByProfile;
   final Future<Map<String, dynamic>> Function()? onDelete;
 
-
-
-
   const ShowAssignmentDetailSheet({
     super.key,
     required this.assignmentId,
@@ -56,21 +53,21 @@ class ShowAssignmentDetailSheet extends StatelessWidget {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     }
   }
+
   @override
   Widget build(BuildContext context) {
-
     final uiTheme = Provider.of<UiThemeProvider>(context);
-
 
     Map<String, dynamic> getSelectedNotifyValues() {
       return {
-        'with_text_sms':'Text SMS',
+        'with_text_sms': 'Text SMS',
         'with_app': 'App',
-        'with_whatsapp':'Whatsapp',
+        'with_whatsapp': 'Whatsapp',
         'with_email': 'Email',
         'with_website': 'Website',
       };
     }
+
     return DraggableScrollableSheet(
       expand: false,
       initialChildSize: 0.70,
@@ -98,51 +95,71 @@ class ShowAssignmentDetailSheet extends StatelessWidget {
                   ),
                 ),
 
-
-                Center(child: _notifyChip('Homewrok','green'
-                ),),
+                Center(child: _notifyChip('Homewrok', 'green')),
 
                 const SizedBox(height: 8),
 
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(assignmentDate, style: const TextStyle(color: Colors.grey)),
-                    Text("$course - $subject", style: const TextStyle(color: Colors.green, fontWeight: FontWeight.w600)),
-
+                    Text(
+                      assignmentDate,
+                      style: const TextStyle(color: Colors.grey),
+                    ),
+                    Text(
+                      "$course - $subject",
+                      style: const TextStyle(
+                        color: Colors.green,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ],
                 ),
                 const Divider(),
                 Container(
-                  padding: EdgeInsets.symmetric(vertical: 5,horizontal: 10),
+                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                   decoration: BoxDecoration(
-                      color: Colors.grey.shade200,
-                      border: Border.all(
-                          color: Colors.grey,
-                          width: 1
-                      ),
-                      borderRadius: BorderRadius.circular(5)
-
+                    color: Colors.grey.shade200,
+                    border: Border.all(color: Colors.grey, width: 1),
+                    borderRadius: BorderRadius.circular(5),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("Submission Date  :  $assigmetSubmissionDate", style: const TextStyle(color: Colors.red, fontWeight: FontWeight.w600)),
+                      Text(
+                        "Submission Date  :  $assigmetSubmissionDate",
+                        style: const TextStyle(
+                          color: Colors.red,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ],
                   ),
                 ),
                 const SizedBox(height: 16),
-                Text(assignmentTitle, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                Text(
+                  assignmentTitle,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 const SizedBox(height: 6),
                 Text(asignmentDetail),
 
                 const SizedBox(height: 16),
                 const Divider(),
 
-                const Text("Attachments:", style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text(
+                  "Attachments:",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
                 const SizedBox(height: 10),
                 if (attachments.isEmpty)
-                  const Text("No Attachments Found", style: TextStyle(color: Colors.grey)),
+                  const Text(
+                    "No Attachments Found",
+                    style: TextStyle(color: Colors.grey),
+                  ),
                 ...attachments.map((file) {
                   final name = file.fileName ?? 'Unnamed';
                   final ext = file.extension ?? '';
@@ -157,22 +174,30 @@ class ShowAssignmentDetailSheet extends StatelessWidget {
                       border: Border.all(color: Colors.grey.shade300),
                     ),
                     child: InkWell(
-                      onTap: () async{
+                      onTap: () async {
                         openFile(url);
-
                       },
                       child: Row(
                         children: [
-                          Icon(ext == 'pdf' ? Icons.picture_as_pdf_sharp : Icons.link, color: ext == 'pdf' ? Colors.red : Colors.blue),
+                          Icon(
+                            ext == 'pdf'
+                                ? Icons.picture_as_pdf_sharp
+                                : Icons.link,
+                            color: ext == 'pdf' ? Colors.red : Colors.blue,
+                          ),
                           const SizedBox(width: 12),
-                          Expanded(child: Text(name, overflow: TextOverflow.ellipsis)),
+                          Expanded(
+                            child: Text(name, overflow: TextOverflow.ellipsis),
+                          ),
                           IconButton(
-                            icon: const Icon(Icons.remove_red_eye, color: Colors.blue),
-                            onPressed: () async{
+                            icon: const Icon(
+                              Icons.remove_red_eye,
+                              color: Colors.blue,
+                            ),
+                            onPressed: () async {
                               openFile(url);
-
                             },
-                          )
+                          ),
                         ],
                       ),
                     ),
@@ -183,37 +208,62 @@ class ShowAssignmentDetailSheet extends StatelessWidget {
                 const Divider(),
 
                 /// Notification Type
-                const Text("Notify On:", style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text(
+                  "Notify On:",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
 
                 Wrap(
                   spacing: 8,
                   runSpacing: 4,
                   children: [
                     if (withapp == 'yes')
-                      _notifyChip(getSelectedNotifyValues()['with_app'],''),
+                      _notifyChip(getSelectedNotifyValues()['with_app'], ''),
                     if (withtextSms == 'yes')
-                      _notifyChip(getSelectedNotifyValues()['with_text_sms'],''),
+                      _notifyChip(
+                        getSelectedNotifyValues()['with_text_sms'],
+                        '',
+                      ),
                     if (withEmail == 'yes')
-                      _notifyChip(getSelectedNotifyValues()['with_email'],''),
+                      _notifyChip(getSelectedNotifyValues()['with_email'], ''),
                     if (withWebsite == 'yes')
-                      _notifyChip(getSelectedNotifyValues()['with_website'],''),
+                      _notifyChip(
+                        getSelectedNotifyValues()['with_website'],
+                        '',
+                      ),
                   ],
                 ),
 
                 const SizedBox(height: 14),
-
 
                 const SizedBox(height: 20),
 
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(children: [
-                      PopupNetworkImage(imageUrl: submittedByProfile,radius: 20,),
-                      const SizedBox(width: 8),
-                      Text("Submitted by $submittedBy", style: const TextStyle(fontSize: 13,fontWeight: FontWeight.bold)),
-                    ]),
-                    Text("Attachment (${attachments.length})", style: const TextStyle(color: Colors.pinkAccent,fontWeight: FontWeight.bold)),
+                    Row(
+                      children: [
+                        PopupNetworkImage(
+                          imageUrl: submittedByProfile,
+                          radius: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          "Submitted by $submittedBy",
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Text(
+                      "Attachment (${attachments.length})",
+                      style: const TextStyle(
+                        color: Colors.pinkAccent,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ],
                 ),
 
@@ -225,9 +275,18 @@ class ShowAssignmentDetailSheet extends StatelessWidget {
                     Expanded(
                       child: OutlinedButton.icon(
                         onPressed: () => Navigator.pop(context),
-                        icon: const Icon(Icons.close,color: Colors.white,size: 11,),
-                        label: const Text("Close",style: TextStyle(fontSize:11,color: Colors.white),),
-                        style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
+                        icon: const Icon(
+                          Icons.close,
+                          color: Colors.white,
+                          size: 11,
+                        ),
+                        label: const Text(
+                          "Close",
+                          style: TextStyle(fontSize: 11, color: Colors.white),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.grey,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -236,15 +295,20 @@ class ShowAssignmentDetailSheet extends StatelessWidget {
                     Expanded(
                       child: ElevatedButton.icon(
                         icon: const Icon(Icons.delete, color: Colors.white),
-                        label: const Text("Delete",style: TextStyle(color: Colors.white),),
-                        style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                        label: const Text(
+                          "Delete",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                        ),
                         onPressed: () {
                           showDialog(
                             context: context,
                             barrierDismissible: false,
                             builder: (_) => DeleteConfirmationDialog(
                               message: "Are you sure you want to delete this item?",
-                              onConfirm: () async {
+                              onConfirm: () async{
                                 Navigator.pop(context);
                                 if (onDelete != null) {
                                   showLoaderDialog(context);
@@ -267,7 +331,7 @@ class ShowAssignmentDetailSheet extends StatelessWidget {
                       ),
                     ),
                   ],
-                )
+                ),
               ],
             ),
           ),
@@ -276,7 +340,8 @@ class ShowAssignmentDetailSheet extends StatelessWidget {
     );
   }
 }
-Widget _notifyChip(String? label,String? color) {
+
+Widget _notifyChip(String? label, String? color) {
   return Chip(
     label: Text(label ?? '', style: const TextStyle(color: Colors.black87)),
     backgroundColor: color != '' ? Colors.green : Colors.grey.shade200,

@@ -9,13 +9,13 @@ import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 import 'package:digivity_admin_app/helpers/CommonFunctions.dart';
 
-
 class ImageHandler {
   File? imageFile;
   File? resizedImageFile;
 
-  Future<void> pickAndResizeImage(
-      {ImageSource source = ImageSource.camera}) async {
+  Future<void> pickAndResizeImage({
+    ImageSource source = ImageSource.camera,
+  }) async {
     try {
       final picker = ImagePicker();
       final pickedFile = await picker.pickImage(source: source);
@@ -39,7 +39,7 @@ class ImageHandler {
           IOSUiSettings(
             title: 'eTab Image Cropper',
             aspectRatioLockEnabled: false,
-          )
+          ),
         ],
       );
 
@@ -62,12 +62,10 @@ class ImageHandler {
       final resizedBytes = img.encodeJpg(resized);
 
       final tempDir = await getTemporaryDirectory();
-      final fileName = 'resized_${DateTime
-          .now()
-          .millisecondsSinceEpoch}.jpg';
-      resizedImageFile =
-      await File(path.join(tempDir.path, fileName)).writeAsBytes(
-          resizedBytes);
+      final fileName = 'resized_${DateTime.now().millisecondsSinceEpoch}.jpg';
+      resizedImageFile = await File(
+        path.join(tempDir.path, fileName),
+      ).writeAsBytes(resizedBytes);
 
       print('✅ Image processed: ${resizedImageFile!.path}');
     } catch (e) {
@@ -75,10 +73,9 @@ class ImageHandler {
     }
   }
 
-
-
-  Future<void> pickAndResizeImageFromGalery(
-      {ImageSource source = ImageSource.camera}) async {
+  Future<void> pickAndResizeImageFromGalery({
+    ImageSource source = ImageSource.camera,
+  }) async {
     try {
       final picker = ImagePicker();
       final pickedFile = await picker.pickImage(source: source);
@@ -102,7 +99,7 @@ class ImageHandler {
           IOSUiSettings(
             title: 'eTab Image Cropper',
             aspectRatioLockEnabled: false,
-          )
+          ),
         ],
       );
 
@@ -125,12 +122,10 @@ class ImageHandler {
       final resizedBytes = img.encodeJpg(resized);
 
       final tempDir = await getTemporaryDirectory();
-      final fileName = 'resized_${DateTime
-          .now()
-          .millisecondsSinceEpoch}.jpg';
-      resizedImageFile =
-      await File(path.join(tempDir.path, fileName)).writeAsBytes(
-          resizedBytes);
+      final fileName = 'resized_${DateTime.now().millisecondsSinceEpoch}.jpg';
+      resizedImageFile = await File(
+        path.join(tempDir.path, fileName),
+      ).writeAsBytes(resizedBytes);
 
       print('✅ Image processed: ${resizedImageFile!.path}');
     } catch (e) {
@@ -138,10 +133,10 @@ class ImageHandler {
     }
   }
 
-
-  Future<Map<String, dynamic>> uploadResizedImage(String integrate,
-      int clientId) async {
-
+  Future<Map<String, dynamic>> uploadResizedImage(
+    String integrate,
+    int clientId,
+  ) async {
     try {
       if (resizedImageFile == null) {
         return {'result': 0, 'message': 'No image found'};
@@ -150,27 +145,20 @@ class ImageHandler {
       final bytes = await resizedImageFile!.readAsBytes();
       final base64Image = base64Encode(bytes);
 
-      final formData = {
-        'DB_ID': clientId,
-        'imageFile': base64Image,
-      };
+      final formData = {'DB_ID': clientId, 'imageFile': base64Image};
 
       final response = await CustomFunctions().uploadImages(
-          integrate, formData);
+        integrate,
+        formData,
+      );
 
       if (response['result'] == 1) {
         return response;
       } else {
-        return {
-          'result': 0,
-          'message': response['message'] ?? 'Upload failed'
-        };
+        return {'result': 0, 'message': response['message'] ?? 'Upload failed'};
       }
     } catch (e) {
       return {'result': 0, 'message': 'Upload error: $e'};
     }
   }
-
 }
-
-

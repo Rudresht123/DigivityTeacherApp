@@ -1,18 +1,22 @@
+import 'package:digivity_admin_app/AdminPanel/Models/GlobalModels/SubjectModel.dart';
 import 'package:digivity_admin_app/Components/CourseComponent.dart';
 import 'package:digivity_admin_app/Components/CustomBlueButton.dart';
+import 'package:digivity_admin_app/Components/CustomDropdown.dart';
 import 'package:digivity_admin_app/Components/DatePickerField.dart';
 import 'package:flutter/material.dart';
 
-class NoticeFilterBottomSheet extends StatefulWidget {
+class SyllabusFilterBottomSheet extends StatefulWidget {
   @override
-  State<NoticeFilterBottomSheet> createState() =>
-      _NoticeFilterBottomSheetState();
+  State<SyllabusFilterBottomSheet> createState() =>
+      _SyllabusFilterBottomSheet();
 }
 
-class _NoticeFilterBottomSheetState extends State<NoticeFilterBottomSheet> {
+class _SyllabusFilterBottomSheet extends State<SyllabusFilterBottomSheet> {
   final TextEditingController _fromDate = TextEditingController();
   final TextEditingController _toDate = TextEditingController();
   String? selectedCourse;
+  List<SubjectModel> subjectList = [];
+  int? _selectedSubjectId;
 
   @override
   Widget build(BuildContext context) {
@@ -49,15 +53,35 @@ class _NoticeFilterBottomSheetState extends State<NoticeFilterBottomSheet> {
               const SizedBox(height: 20),
 
               CourseComponent(
-                initialValue: selectedCourse,
+                isSubject: true,
+                forData: "subjects",
                 onChanged: (value) {
                   selectedCourse = value;
+                  setState(() {});
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "Please Select Course First";
+                  }
+                  return null;
+                },
+                onSubjectListChanged: (List<SubjectModel> subjects) {
+                  setState(() {
+                    subjectList = subjects;
+                  });
                 },
               ),
-              const SizedBox(height: 20),
-              DatePickerField(label: 'From Date', controller: _fromDate),
-              const SizedBox(height: 20),
-              DatePickerField(label: 'To Date', controller: _toDate),
+              const SizedBox(height: 16),
+              CustomDropdown(
+                items: subjectList,
+                displayKey: 'subject',
+                valueKey: 'id',
+                hint: 'Subject',
+                onChanged: (value) {
+                  _selectedSubjectId = value;
+                },
+                itemMapper: (item) => {'id': item.id, 'subject': item.subject},
+              ),
               const SizedBox(height: 20),
               CustomBlueButton(
                 width: double.infinity,
@@ -65,9 +89,8 @@ class _NoticeFilterBottomSheetState extends State<NoticeFilterBottomSheet> {
                 icon: Icons.search,
                 onPressed: () {
                   final filterData = {
-                    'notice_date_from': _fromDate.text,
-                    'notice_date_to': _toDate.text,
                     'course_id': selectedCourse.toString(),
+                    'subject_id': _selectedSubjectId.toString(),
                   };
                   Navigator.of(context).pop(filterData);
                 },

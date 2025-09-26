@@ -13,14 +13,20 @@ class StudentAttendanceProvider with ChangeNotifier {
     required String? courseId,
     required String? selectedSortBy,
     required String? selectedDate,
+    required String? selectedOrderBy
   }) async {
     final userId = await SharedPrefHelper.getPreferenceValue('user_id');
     final token = await SharedPrefHelper.getPreferenceValue('access_token');
 
+    final formdata = {
+      "sort_by_method":selectedSortBy,
+      "order_by":selectedOrderBy,
+    };
+
     final shortby = selectedSortBy != 'sortBy' ? selectedSortBy : 'first_name';
     final url = "api/MobileApp/teacher/$userId/$courseId/$shortby/$selectedDate/StudentAttendance"; // <- replace with actual URL
     try {
-      final response = await getApiService.getRequestData(url, token!);
+      final response = await getApiService.postRequestData(url, token!,formdata!);
       if (response is Map<String, dynamic> &&
           response['success'] != null &&
           response['success'] is List) {

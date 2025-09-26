@@ -3,13 +3,13 @@ import 'package:digivity_admin_app/Components/CustomBlueButton.dart';
 import 'package:digivity_admin_app/Components/DatePickerField.dart';
 import 'package:flutter/material.dart';
 
-class NoticeFilterBottomSheet extends StatefulWidget {
+class CircularFilterBottomSheet extends StatefulWidget {
   @override
-  State<NoticeFilterBottomSheet> createState() =>
-      _NoticeFilterBottomSheetState();
+  State<CircularFilterBottomSheet> createState() =>
+      _CircularFilterBottomSheet();
 }
 
-class _NoticeFilterBottomSheetState extends State<NoticeFilterBottomSheet> {
+class _CircularFilterBottomSheet extends State<CircularFilterBottomSheet> {
   final TextEditingController _fromDate = TextEditingController();
   final TextEditingController _toDate = TextEditingController();
   String? selectedCourse;

@@ -3,6 +3,7 @@ import 'package:digivity_admin_app/AdminPanel/Components/SearchBox.dart';
 import 'package:digivity_admin_app/AdminPanel/Models/UploadsModel/SyllabusModel.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/Uploads/Assignments/AssignmentFilterBottomSheet.dart';
 import 'package:digivity_admin_app/AdminPanel/Screens/Uploads/Syllabus/SyllabusCard.dart';
+import 'package:digivity_admin_app/AdminPanel/Screens/Uploads/Syllabus/SyllabusFilterBottomSheet.dart';
 import 'package:digivity_admin_app/Components/ApiMessageWidget.dart';
 import 'package:digivity_admin_app/Components/BackgrounWeapper.dart';
 import 'package:digivity_admin_app/Components/Loader.dart';
@@ -134,13 +135,17 @@ class _Studentsyllabus extends State<Studentsyllabus> {
             shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
             ),
-            builder: (_) => AssignmentFilterBottomSheet(),
+            builder: (_) => SyllabusFilterBottomSheet(),
           );
-
           if (filterData != null) {
             showLoaderDialog(context);
-            await _fetchSyllabus(filterData);
-            hideLoaderDialog(context);
+            try {
+              await _fetchSyllabus(filterData);
+            } catch (e) {
+              showBottomMessage(context, "${e}", true);
+            } finally {
+              hideLoaderDialog(context);
+            }
           }
         },
 

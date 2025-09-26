@@ -444,9 +444,11 @@ final GoRouter appRouter = GoRouter(
       path: '/student-attendance-list',
       builder: (context, state) {
         final data = state.extra as Map<String, dynamic>;
+
         return StudentMarkAttendance(
           courseId: data['course_id'],
           selectedSortBy: data['selectedSortBy'],
+          selectedOrderBy: data['selectedOrderBy'],
           selectedDate: data['selectedDate'],
         );
       },

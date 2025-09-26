@@ -32,7 +32,6 @@ class _AppBarComponentState extends State<AppBarComponent> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getUserData();
-
     });
   }
 
@@ -43,8 +42,6 @@ class _AppBarComponentState extends State<AppBarComponent> {
     hideLoaderDialog(context);
     setState(() {});
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +92,6 @@ class _AppBarComponentState extends State<AppBarComponent> {
                       context,
                       listen: false,
                     ).fetchMenuItems();
-
                   },
                 ),
                 SizedBox(width: 15),

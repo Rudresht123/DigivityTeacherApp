@@ -103,8 +103,8 @@ class _StudentListsDataFormState extends State<StudentListsDataForm> {
                 await Provider.of<StudentDataProvider>(context, listen: false)
                     .fetchStudents(
                   courseId: selectedCourseId!,
-                  sortByMethod: selectedSortBy!,
-                  orderByMethod: selectedStudentSort ?? 'asc',
+                  orderByMethod: selectedSortBy!,
+                   sortByMethod: selectedStudentSort ?? 'sortBy',
                   selectedStatus: selectedStatus ?? 'active',
                 );
               }catch(e){

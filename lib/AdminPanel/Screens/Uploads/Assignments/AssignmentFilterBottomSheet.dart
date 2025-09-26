@@ -7,7 +7,8 @@ import 'package:flutter/material.dart';
 
 class AssignmentFilterBottomSheet extends StatefulWidget {
   @override
-  State<AssignmentFilterBottomSheet> createState() => _AssignmentFilterBottomSheet();
+  State<AssignmentFilterBottomSheet> createState() =>
+      _AssignmentFilterBottomSheet();
 }
 
 class _AssignmentFilterBottomSheet extends State<AssignmentFilterBottomSheet> {
@@ -31,7 +32,6 @@ class _AssignmentFilterBottomSheet extends State<AssignmentFilterBottomSheet> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
               Center(
                 child: Container(
                   width: 40,
@@ -44,14 +44,26 @@ class _AssignmentFilterBottomSheet extends State<AssignmentFilterBottomSheet> {
                 ),
               ),
 
-              Center(child: Chip(label: Text('Filter Data'),backgroundColor: Colors.green)),
+              Center(
+                child: Chip(
+                  label: Text('Filter Data'),
+                  backgroundColor: Colors.green,
+                ),
+              ),
               const SizedBox(height: 20),
 
               CourseComponent(
                 isSubject: true,
+                forData: "subjects",
                 onChanged: (value) {
                   selectedCourse = value;
                   setState(() {});
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "Please Select Course First";
+                  }
+                  return null;
                 },
                 onSubjectListChanged: (List<SubjectModel> subjects) {
                   setState(() {
@@ -68,33 +80,27 @@ class _AssignmentFilterBottomSheet extends State<AssignmentFilterBottomSheet> {
                 onChanged: (value) {
                   _selectedSubjectId = value;
                 },
-                itemMapper: (item) => {
-                  'id': item.id,
-                  'subject': item.subject,
-                },
+                itemMapper: (item) => {'id': item.id, 'subject': item.subject},
               ),
               const SizedBox(height: 20),
-              DatePickerField(
-                label: 'From Date',
-                controller:_fromDate,
-              ),
+              DatePickerField(label: 'From Date', controller: _fromDate),
               const SizedBox(height: 20),
-              DatePickerField(
-                label: 'To Date',
-                controller:_toDate,
-              ),
+              DatePickerField(label: 'To Date', controller: _toDate),
               const SizedBox(height: 20),
               CustomBlueButton(
-                  width: double.infinity,
-                  text: 'Search', icon: Icons.search, onPressed: (){
-                final filterData = {
-                  'notice_date_from': _fromDate.text,
-                  'notice_date_to':_toDate.text,
-                  'course_id':selectedCourse.toString(),
-                  'subject_id':_selectedSubjectId.toString()
-                };
-                Navigator.of(context).pop(filterData);
-              })
+                width: double.infinity,
+                text: 'Search',
+                icon: Icons.search,
+                onPressed: () {
+                  final filterData = {
+                    'show_date_time': _fromDate.text,
+                    'end_date_time': _toDate.text,
+                    'course_id': selectedCourse.toString(),
+                    'subject_id': _selectedSubjectId.toString(),
+                  };
+                  Navigator.of(context).pop(filterData);
+                },
+              ),
               // Add filter fields here...
             ],
           ),

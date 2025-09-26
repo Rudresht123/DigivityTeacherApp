@@ -1,4 +1,3 @@
-
 import 'package:digivity_admin_app/Helpers/getApiService.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -20,12 +19,12 @@ class StudentDataProvider with ChangeNotifier {
     final userid = await SharedPrefHelper.getPreferenceValue('user_id');
     final token = await SharedPrefHelper.getPreferenceValue('access_token');
 
-    final url = "api/MobileApp/master-admin/$userid/StudentList";
+    final url = "api/MobileApp/teacher/$userid/StudentList";
 
     final body = {
       "course_id": courseId,
-      "sort_by_method": 'sortBy',
-      "order_by": sortByMethod,
+      "sort_by_method": sortByMethod,
+      "order_by": orderByMethod,
       "status": selectedStatus,
     };
     try {
@@ -52,12 +51,10 @@ class StudentDataProvider with ChangeNotifier {
     }
   }
 
-
-
   void removeStudentById(String studentId) {
-    _students.removeWhere((student) => student.studentId.toString() == studentId);
+    _students.removeWhere(
+      (student) => student.studentId.toString() == studentId,
+    );
     notifyListeners();
   }
-
-
 }

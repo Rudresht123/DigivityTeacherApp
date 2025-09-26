@@ -72,13 +72,14 @@ class _AddSyllabusPage extends State<AddSyllabusPage> {
               children: [
                 CourseComponent(
                   isSubject: true,
+                  forData: "subjects",
                   onChanged: (value) {
                     courseId = value;
                     setState(() {});
                   },
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return "Please Select The Course First";
+                      return "Please Select Course First";
                     }
                     return null;
                   },

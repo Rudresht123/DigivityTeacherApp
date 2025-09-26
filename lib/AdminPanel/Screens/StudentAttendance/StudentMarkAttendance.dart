@@ -14,11 +14,13 @@ class StudentMarkAttendance extends StatefulWidget {
   final String courseId;
   final String? selectedSortBy;
   final String selectedDate;
+  final String? selectedOrderBy;
 
   const StudentMarkAttendance({
     required this.courseId,
     this.selectedSortBy,
     required this.selectedDate,
+    required this.selectedOrderBy,
     super.key,
   });
 
@@ -46,8 +48,9 @@ class _StudentMarkAttendance extends State<StudentMarkAttendance> {
       );
       await provider.fetchAttendanceList(
         courseId: widget.courseId,
-        selectedSortBy: widget.selectedSortBy ?? 'roll_no',
+        selectedSortBy: widget.selectedSortBy ?? 'sortBy',
         selectedDate: widget.selectedDate,
+        selectedOrderBy:widget.selectedOrderBy
       );
       setState(() {
         _students = provider.attendanceList;

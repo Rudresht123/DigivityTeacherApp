@@ -10,16 +10,19 @@ import 'package:digivity_admin_app/Components/ShortByDropdown.dart';
 import 'package:digivity_admin_app/Components/StudentSortBy.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+
 class StudentAttendanceFillterForm extends StatefulWidget {
   const StudentAttendanceFillterForm({super.key});
 
   @override
-  State<StudentAttendanceFillterForm> createState() => _StudentAttendanceFillterForm();
+  State<StudentAttendanceFillterForm> createState() =>
+      _StudentAttendanceFillterForm();
 }
 
-class _StudentAttendanceFillterForm extends State<StudentAttendanceFillterForm> {
+class _StudentAttendanceFillterForm
+    extends State<StudentAttendanceFillterForm> {
   String? selectedCourseId;
-  String? selectedSortBy;
+  String? selectedOrderBy;
   String? selectedStudentSort;
   TextEditingController _selectedDateController = TextEditingController();
 
@@ -52,10 +55,8 @@ class _StudentAttendanceFillterForm extends State<StudentAttendanceFillterForm> 
                         return null;
                       },
                       onChanged: (val) {
-                        selectedCourseId=val;
-                        setState(() {
-
-                        });
+                        selectedCourseId = val;
+                        setState(() {});
                       },
                     ),
                     const SizedBox(height: 20),
@@ -64,7 +65,7 @@ class _StudentAttendanceFillterForm extends State<StudentAttendanceFillterForm> 
                     ShortByDropdown(
                       onChanged: (value) {
                         setState(() {
-                          selectedSortBy = value;
+                          selectedOrderBy = value;
                         });
                       },
                     ),
@@ -84,12 +85,12 @@ class _StudentAttendanceFillterForm extends State<StudentAttendanceFillterForm> 
                     // OPTIONAL: STATUS FILTER
                     DatePickerField(
                       label: 'Attendance Date',
-                      controller:_selectedDateController,
-                    )
+                      controller: _selectedDateController,
+                    ),
                   ],
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -98,28 +99,27 @@ class _StudentAttendanceFillterForm extends State<StudentAttendanceFillterForm> 
         child: CustomBlueButton(
           text: 'Search',
           icon: Icons.search,
-            onPressed: () {
-            print(selectedCourseId);
-            print(selectedSortBy);
-              if (selectedCourseId != null && selectedSortBy != null) {
-                // Delay push until the next frame
-                  context.pushNamed(
-                    'student-attendance-list',
-                    extra: {
-                      'course_id': selectedCourseId,
-                      'selectedSortBy': selectedSortBy,
-                      'selectedDate': _selectedDateController.text,
-                    },
-                  );
+          onPressed: () {
+            if (selectedCourseId != null && selectedOrderBy != null) {
+              // Delay push until the next frame
 
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Please select Course and Sort By"),
-                  ),
-                );
-              }
+              context.pushNamed(
+                'student-attendance-list',
+                extra: {
+                  'course_id': selectedCourseId,
+                  'selectedSortBy': selectedStudentSort,
+                  "selectedOrderBy": selectedOrderBy,
+                  'selectedDate': _selectedDateController.text,
+                },
+              );
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text("Please select Course and Sort By"),
+                ),
+              );
             }
+          },
         ),
       ),
     );

@@ -151,286 +151,297 @@ class _StaffMarkAttendance extends State<StaffMarkAttendance> {
       body: BackgroundWrapper(
         child: isLogin == false
             ? Center(child: CircularProgressIndicator())
-            : SingleChildScrollView(child: Column(
-          children: [
-            CardContainer(
-              child: Column(
-                children: [
-                  // Full-width centered header
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(12.0),
-                    color: uiTheme.appBarColor ?? Colors.blueAccent,
-                    alignment: Alignment.center,
-                    child: Text(
-                      'Scheduled Arrival / Departure Time',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        fontSize: 15,
-                      ),
-                    ),
-                  ),
-
-                  // Actual Table
-                  Table(
-                    border: TableBorder.all(
-                      color: Colors.grey.shade300,
-                      width: 1,
-                    ),
-                    columnWidths: {
-                      0: FlexColumnWidth(2),
-                      1: FlexColumnWidth(3),
-                    },
-                    children: [
-                      // Column Headers
-                      TableRow(
-                        decoration: BoxDecoration(
-                          color: Colors.blueGrey.shade100,
-                        ),
+            : SingleChildScrollView(
+                child: Column(
+                  children: [
+                    CardContainer(
+                      child: Column(
                         children: [
-                          Padding(
+                          // Full-width centered header
+                          Container(
+                            width: double.infinity,
                             padding: const EdgeInsets.all(12.0),
+                            color: uiTheme.appBarColor ?? Colors.blueAccent,
+                            alignment: Alignment.center,
                             child: Text(
-                              'Scheduled Arrival',
+                              'Scheduled Arrival / Departure Time',
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                fontSize: 15,
                               ),
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Text(
-                              'Scheduled Departure',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
+
+                          // Actual Table
+                          Table(
+                            border: TableBorder.all(
+                              color: Colors.grey.shade300,
+                              width: 1,
                             ),
-                          ),
-                        ],
-                      ),
-
-                      // Data Row 1
-                      TableRow(
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade50,
-                        ),
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Text(
-                              attendanceConfiguration[0].arrivalTime ??
-                                  '09:00 AM',
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Text(
-                              attendanceConfiguration[0].departureTime ??
-                                  '05:00 PM',
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-
-            CardContainer(
-              child: Column(
-                children: [
-                  // Header: Selfie & Punch In Info
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(12.0),
-                    decoration: BoxDecoration(
-                      color: uiTheme.appBarColor ?? Colors.blueAccent,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Column(
-                      children: [
-                        Text(
-                          'Take Selfie & Mark Attendance',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          'Punch In Option will Disable after ${attendanceConfiguration.isNotEmpty ? attendanceConfiguration[0].punchinDisable : 1} min. from Arrival Time',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  SizedBox(height: 10),
-
-                  // Staff Image Container (responsive)
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.5,
-                    height: MediaQuery.of(context).size.width * 0.6,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(
-                        color:
-                        uiTheme.appBarColor ?? Colors.green.shade600,
-                        width: 2,
-                      ),
-                      image: DecorationImage(
-                        image: checkedImage != null
-                            ? FileImage(checkedImage!) // Use picked file
-                            : AssetImage('assets/images/staff_image.jpeg')
-                        as ImageProvider,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  checkedImage == null
-                      ? Container(
-                    width: MediaQuery.of(context).size.width * 0.5,
-                    child: isInDesiredPlace
-                        ? CustomBlueButton(
-                      text: "Take Photo",
-                      icon: Icons.camera,
-                      onPressed: () async {
-                        final permission =await PermissionService
-                            .requestCameraPermission(context);
-                        if (permission){
-                          final clickedFile =
-                          FilePickerHelper.pickFromCamera(
-                                (file) =>
-                            {
-                              setState(() {
-                                checkedImage = file;
-                              }),
+                            columnWidths: {
+                              0: FlexColumnWidth(2),
+                              1: FlexColumnWidth(3),
                             },
-                          );
-                      }
-                      },
-                    )
-                        : Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.redAccent.withOpacity(
-                          0.1,
-                        ),
-                        borderRadius: BorderRadius.circular(
-                          10,
-                        ),
-                        border: Border.all(
-                          color: Colors.redAccent,
-                          width: 1.5,
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment:
-                        MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.location_off,
-                            color: Colors.redAccent,
-                            size: 20,
-                          ),
-                          SizedBox(width: 8),
-                          Text(
-                            "Not at School Range",
-                            style: TextStyle(
-                              color: Colors.redAccent,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                            ),
+                            children: [
+                              // Column Headers
+                              TableRow(
+                                decoration: BoxDecoration(
+                                  color: Colors.blueGrey.shade100,
+                                ),
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(12.0),
+                                    child: Text(
+                                      'Scheduled Arrival',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(12.0),
+                                    child: Text(
+                                      'Scheduled Departure',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              // Data Row 1
+                              TableRow(
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.shade50,
+                                ),
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(12.0),
+                                    child: Text(
+                                      attendanceConfiguration[0].arrivalTime ??
+                                          '09:00 AM',
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(12.0),
+                                    child: Text(
+                                      attendanceConfiguration[0]
+                                              .departureTime ??
+                                          '05:00 PM',
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ],
                       ),
                     ),
-                  )
-                      : Container(
-                    width: MediaQuery.of(context).size.width * 0.5,
-                    child: Row(
-                      mainAxisAlignment:
-                      MainAxisAlignment.spaceBetween,
-                      children: [
-                        SubmissionButton(
-                          bgColour: Colors.green,
-                          text: "Punch In",
-                          icon: Icons.check,
-                          onPressed: () {
-                            int lateMinutes = minutesdifferent(
-                              attendanceConfiguration[0]!
-                                  .arrivalTime,
-                            );
-                            showDialog(
-                              context: context,
-                              barrierDismissible: false,
-                              builder: (_) =>
-                                  AttendanceConfirmationDialog(
-                                    lateMinutes: lateMinutes,
-                                    attendanceType: "punchin",
-                                    onConfirm: () async {
-                                      Navigator.pop(context);
-                                      await submitAttendance(
-                                        'punchin',
-                                      );
-                                    },
-                                    onCancel: () {
-                                      Navigator.pop(context);
-                                    },
+
+                    CardContainer(
+                      child: Column(
+                        children: [
+                          // Header: Selfie & Punch In Info
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(12.0),
+                            decoration: BoxDecoration(
+                              color: uiTheme.appBarColor ?? Colors.blueAccent,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Column(
+                              children: [
+                                Text(
+                                  'Take Selfie & Mark Attendance',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
                                   ),
-                            );
-                          },
-                        ),
-                        SizedBox(width: 10),
-                        SubmissionButton(
-                          bgColour: Colors.blueAccent,
-                          text: "Punch Out",
-                          icon: Icons.save,
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              barrierDismissible: false,
-                              builder: (_) =>
-                                  AttendanceConfirmationDialog(
-                                    lateMinutes: 0,
-                                    attendanceType: "punchout",
-                                    onConfirm: () async {
-                                      Navigator.pop(context);
-                                      await submitAttendance(
-                                        'punchout',
-                                      );
-                                    },
-                                    onCancel: () {
-                                      Navigator.pop(context);
-                                    },
+                                ),
+                                SizedBox(height: 8),
+                                Text(
+                                  'Punch In Option will Disable after ${attendanceConfiguration.isNotEmpty ? attendanceConfiguration[0].punchinDisable : 1} min. from Arrival Time',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
                                   ),
-                            );
-                          },
-                        ),
-                      ],
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          SizedBox(height: 10),
+
+                          // Staff Image Container (responsive)
+                          Container(
+                            width: MediaQuery.of(context).size.width * 0.5,
+                            height: MediaQuery.of(context).size.width * 0.6,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color:
+                                    uiTheme.appBarColor ??
+                                    Colors.green.shade600,
+                                width: 2,
+                              ),
+                              image: DecorationImage(
+                                image: checkedImage != null
+                                    ? FileImage(
+                                        checkedImage!,
+                                      ) // Use picked file
+                                    : AssetImage(
+                                            'assets/images/staff_image.jpeg',
+                                          )
+                                          as ImageProvider,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          checkedImage == null
+                              ? Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.5,
+                                  child: isInDesiredPlace
+                                      ? CustomBlueButton(
+                                          text: "Take Photo",
+                                          icon: Icons.camera,
+                                          onPressed: () async {
+                                            final permission =
+                                                await PermissionService.requestCameraPermission(
+                                                  context,
+                                                );
+                                            if (permission) {
+                                              final clickedFile =
+                                                  FilePickerHelper.pickFromCamera(
+                                                    (file) => {
+                                                      setState(() {
+                                                        checkedImage = file;
+                                                      }),
+                                                    },
+                                                  );
+                                            }
+                                          },
+                                        )
+                                      : Container(
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 8,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: Colors.redAccent.withOpacity(
+                                              0.1,
+                                            ),
+                                            borderRadius: BorderRadius.circular(
+                                              10,
+                                            ),
+                                            border: Border.all(
+                                              color: Colors.redAccent,
+                                              width: 1.5,
+                                            ),
+                                          ),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Icon(
+                                                Icons.location_off,
+                                                color: Colors.redAccent,
+                                                size: 20,
+                                              ),
+                                              SizedBox(width: 8),
+                                              Text(
+                                                "Not at School Range",
+                                                style: TextStyle(
+                                                  color: Colors.redAccent,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 14,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                )
+                              : Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.5,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      SubmissionButton(
+                                        bgColour: Colors.green,
+                                        text: "Punch In",
+                                        icon: Icons.check,
+                                        onPressed: () {
+                                          int lateMinutes = minutesdifferent(
+                                            attendanceConfiguration[0]!
+                                                .arrivalTime,
+                                          );
+                                          showDialog(
+                                            context: context,
+                                            barrierDismissible: false,
+                                            builder: (_) =>
+                                                AttendanceConfirmationDialog(
+                                                  lateMinutes: lateMinutes,
+                                                  attendanceType: "punchin",
+                                                  onConfirm: () async {
+                                                    Navigator.pop(context);
+                                                    await submitAttendance(
+                                                      'punchin',
+                                                    );
+                                                  },
+                                                  onCancel: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                ),
+                                          );
+                                        },
+                                      ),
+                                      SizedBox(width: 10),
+                                      SubmissionButton(
+                                        bgColour: Colors.blueAccent,
+                                        text: "Punch Out",
+                                        icon: Icons.save,
+                                        onPressed: () {
+                                          showDialog(
+                                            context: context,
+                                            barrierDismissible: false,
+                                            builder: (_) =>
+                                                AttendanceConfirmationDialog(
+                                                  lateMinutes: 0,
+                                                  attendanceType: "punchout",
+                                                  onConfirm: () async {
+                                                    Navigator.pop(context);
+                                                    await submitAttendance(
+                                                      'punchout',
+                                                    );
+                                                  },
+                                                  onCancel: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                ),
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),),
       ),
     );
   }

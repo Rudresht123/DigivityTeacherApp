@@ -49,7 +49,7 @@ class _DatePickerFieldState extends State<DatePickerField> {
       context: context,
       initialDate: initialDate,
       firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
+      lastDate: DateTime.now(),
     );
 
     if (pickedDate != null) {

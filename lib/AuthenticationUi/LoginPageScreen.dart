@@ -289,8 +289,7 @@ class _LoginPageScreenState extends State<LoginPageScreen> {
                                           );
                                         }
                                         try {
-                                          await DeviceToken()
-                                              .registerDeviceToken();
+                                          await DeviceToken().registerDeviceToken();
                                         } catch (e) {
                                           debugPrint(
                                             "Error generating device token: $e",
